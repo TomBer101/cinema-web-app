@@ -1,8 +1,8 @@
 {
     "permissions": [
         {
-            "userId": 1,
-            "permissions": ["read", "write", "update", "delete"]
+            "userId": "66c9f0b9014c0621abbbec5e",
+            "permissions": ["View Subscription", "Create Subscription", "Delete Subscriptions", "View Movies", "Create Movies", "Delete Movies"]
         }
     ]
 }
