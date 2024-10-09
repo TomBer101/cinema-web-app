@@ -7,10 +7,28 @@ const signUp = async (req, res) => {
     const {userName, password} = req.body;
 
     try {
+        const user = await authService.register(userName, password)
+        const userData = await userRepository.getUserById(user._id.toString())
+        const userPermissions = await permissionsRepository.getUserPermissions(user._id.toString())
+
+        req.session.user = {
+            id: user._id,
+            permissions: userPermissions
+        }
+
+        req.session.cookie.maxAge =  userData.sessionTimeout * 60000;  // Convert minutes to milliseconds
+        req.session.cookie._expire = new Date(Date.now() + userData.sessionTimeout * 60000); 
+
+        res.status(200).send({
+            message: 'Login successful', 
+            userName: `${userData.firstName} ${userData.lastName}`,
+            permissions: userPermissions
+        });
+    
         //sign up
         // experation and permissions
     } catch (err) {
-
+        res.status(err.statusCode).json({message: err.message})
     }
 }
 

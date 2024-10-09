@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const User = require('../mongoDB/models/userModel')
 const permissionsRepo = require('../repositories/persmissionsRepo')
 const usersRepo = require('../repositories/usersRepo')
+const {AppError} = require('../classes/appErrors')
 
 const saltRounds = 10;
 
@@ -33,18 +34,23 @@ const login = async (userName, password) => {
 const register = async (userName, password) => {
     try {
         const existingUser = await User.findOne({ userName })
+
+        if (!existingUser) {
+            throw new AppError('Invalid user name.', 404)
+        }
+
         if (existingUser && existingUser.password) {
-            throw new Error('User name is in used.')
+            throw new AppError('User name is in used.', 404)
         }
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const newUser = new User({ userName, password: hashedPassword })
-        await newUser.save();
+        existingUser.password = hashedPassword;
+        await existingUser.save()
 
-        return newUser
+        return existingUser
     } catch (err) {
         console.error('Error register user: ', err);
-        throw new Error('Error register user')
+        throw new AppError('Error register user', 500)
     }
 
 }

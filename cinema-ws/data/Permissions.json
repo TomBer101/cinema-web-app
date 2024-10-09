@@ -3,6 +3,10 @@
         {
             "userId": "66c9f0b9014c0621abbbec5e",
             "permissions": ["View Subscription", "Create Subscription", "Delete Subscriptions", "View Movies", "Create Movies", "Delete Movies"]
+        },
+        {
+            "userId": "6706d052084c477e4df74db3",
+            "permissions": ["View Subscription", "View Movies"]
         }
     ]
 }

@@ -1,5 +1,6 @@
 const JFile = require('jsonfile')
-const path = require('path')
+const path = require('path');
+const { AppError } = require('../classes/appErrors');
 
 const file = path.join(__dirname, '../data/Users.json')
 
@@ -15,7 +16,7 @@ const getUserById = async (id) => {
         const user = usersData.users.find(u => u.id === id);
 
         if (!user) {
-            throw new Error('User not found');
+            throw new AppErrorError('User not found', 404);
         }
 
         return user;
