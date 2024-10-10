@@ -14,7 +14,22 @@ const checkPermissions = (requiredPermission) => {
     };
 };
 
+const adminRoute = async (req, res, next) => {
+    const { user } = req.session
+
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    if (!user.admin) {
+        return res.status(403).json({ message: 'Forbidden. You do not have permission.' });
+    }
+
+    next()
+}
+
 
 module.exports = {
     checkPermissions,
+    adminRoute
 }
