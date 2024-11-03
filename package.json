@@ -1,0 +1,13 @@
+{
+  "name": "cinema-web-app",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:cinema-ws": "nodemon --watch cinema-ws cinema-ws/index.js",
+    "dev:subscription-ws": "nodemon --watch subscription-ws subscription-ws/index.js",
+    "dev:all": "concurrently \"npm run dev:cinema-ws\" \"npm run dev:subscription-ws\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "nodemon": "^3.1.7"
+  }
+}
