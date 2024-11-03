@@ -14,7 +14,7 @@
             "userName": "Admin",
             "lastName": "admin",
             "createdDate": "14-09-2024",
-            "sessionTimeout": 5
+            "sessionTimeout": 20
         },
         {
             "id": "6706d052084c477e4df74db3",
