@@ -4,29 +4,30 @@ const AppError = require('../classes/appError')
 
 const getAllMovies = async (page, limit) => { // TODO: add watchers data
     const skip = (page - 1) * limit
-    try {
-        const movies = await Movie.aggregate([
-            {
-                $lookup: {
-                    from: 'subscriptions',
-                    let: {movieId: '$_id'},
-                    pipeline: [
-
-                    ]
-                }
-            }
-        ])
-    }
-
     // try {
-    //     const movies = await Movie.find({})
-    //                     .skip(skip)
-    //                     .limit(limit)
-    //     return movies
-    // } catch (err) {
-    //     console.error('Error fetching all movies: ', err);
-    //     throw new AppError('Internal Server Error', 500)
+    //     const movies = await Movie.aggregate([
+    //         {
+    //             $lookup: {
+    //                 from: 'subscriptions',
+    //                 let: {movieId: '$_id'},
+    //                 pipeline: [
+
+    //                 ]
+    //             }
+    //         }
+    //     ])
     // }
+
+    // Old/Simplr version
+    try {
+        const movies = await Movie.find({})
+                        .skip(skip)
+                        .limit(limit)
+        return movies
+    } catch (err) {
+        console.error('Error fetching all movies: ', err);
+        throw new AppError('Internal Server Error', 500)
+    }
 }
 
 const addMovie = async ({name, genres, imageUrl, premired}) => {
