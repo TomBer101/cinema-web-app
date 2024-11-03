@@ -50,7 +50,7 @@ const register = async (userName, password) => {
         return existingUser
     } catch (err) {
         console.error('Error register user: ', err);
-        throw new AppError('Error register user', 500)
+        throw err;
     }
 
 }

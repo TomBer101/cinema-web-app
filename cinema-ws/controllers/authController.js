@@ -2,6 +2,8 @@ const authService = require('../services/authService')
 const userRepository = require('../repositories/usersRepo')
 const permissionsRepository = require('../repositories/persmissionsRepo')
 
+const ADMIN_ID = "66c9f0b9014c0621abbbec5e"
+
 
 const signUp = async (req, res) => {
     const {userName, password} = req.body;
@@ -44,6 +46,7 @@ const login = async (req, res) => {
         req.session.user = {
             id: userId,
             permissions: userPermissions,
+            admin: userId === ADMIN_ID
         };
 
         req.session.cookie.maxAge =  userData.sessionTimeout * 60000;  // Convert minutes to milliseconds
@@ -52,7 +55,8 @@ const login = async (req, res) => {
         res.status(200).send({
             message: 'Login successful', 
             userName: `${userData.firstName} ${userData.lastName}`,
-            permissions: userPermissions
+            permissions: userPermissions,
+            admin: userId === ADMIN_ID
         });
         
         
