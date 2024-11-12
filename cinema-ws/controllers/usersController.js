@@ -13,7 +13,7 @@ const getAllUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const {userId} = req.body
+        const {userId} = req.query
 
         usersService.deleteUser(userId)
         res.status(200).json({message: 'User was deleted.'})
