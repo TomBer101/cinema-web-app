@@ -21,6 +21,19 @@ export const postData = async (route, data) => {
     }
 }
 
+export const patchData = async (route, data) => {
+    try {
+        const response = await apiClient.patch(route, data)
+        return {
+            data: response.data,
+            statusCode: response.status
+        }
+    } catch (err) {
+        console.error(`Patch request to ${route} failed: `, err);
+        throw err
+    }
+}
+
 export const deleteData = async (route, configs) => {
     try {
         const response = await apiClient.delete(route, configs)
