@@ -13,20 +13,23 @@ const login = async (userName, password) => {
         const user = await User.findOne({userName: userName})
 
         if (!user) {
-            throw new Error('Username was not found')
+            throw new AppError('Username was not found', 404)
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
-            throw new Error('Invalid password')
+            throw new AppError('Invalid password', 403)
         }
 
         return user._id.toString();
 
         // create payload: session or jwt
     } catch (err) {
+        if (!err instanceof AppError) {
+            throw new Error('Internal server error')
+        }
         console.error('Error login user: ', err)
-        throw new Error('Internal server error')
+        throw err
     }
 
 }

@@ -1,5 +1,6 @@
 const express = require('express')
 const session = require('express-session')
+const cors = require('cors');
 const configDB = require('./mongoDB/config')
 
 const authRouter = require('./routes/authRouter')
@@ -12,6 +13,7 @@ const authMiddleware = require('./middlewares/authMiddlewares')
 
 const PORT = 8080;
 const app = express();
+app.use(cors({ origin: 'http://localhost:5173', credentials: true })); // Adjust the origin if necessary
 configDB.connectDB();
 
 app.use(express.json())
