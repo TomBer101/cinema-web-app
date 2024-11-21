@@ -1,15 +1,30 @@
+import { Card } from "@mui/material"
 import MovieItem from "./MovieItem"
 import UserItem from "./UserItem"
 
 const ItemFactory = ({type, props}) => {
+
+    let itemComponent
+
+    console.log("Item Factory props: ", props);
+    
+
     switch (type) {
         case 'movies':
-            return <MovieItem {...props} />
+            itemComponent = <MovieItem {...props} />
+            break
         case 'users':
-            return <UserItem {...props} />
+            itemComponent = <UserItem {...props} />
+            break
         default:
-            <p>{`Type ${type} is Unknown`}</p>
+            itemComponent =<p>{`Type ${type} is Unknown`}</p>
     }
+
+    return (
+        <Card raised={true} sx={{ p: '1rem 2rem', width: '25%'   }}>
+            {itemComponent}
+        </Card>
+    )
 } 
 
 export default ItemFactory
