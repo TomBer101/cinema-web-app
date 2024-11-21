@@ -31,7 +31,7 @@ const ViewPage = () => {
     if (error) return <p>Error : {error.message}</p>
 
     return (
-        <div>
+        <div style={{padding: '0 3rem'}}>
             <Typography variant='h3'>{`All ${type}`}</Typography>
             <List>
                 {
