@@ -1,6 +1,6 @@
-import {addUser, fetchUsers, deleteUser} from '../services/usersService';
-import { useGenericMutation } from './queryMutations';
+import {addUser, fetchUsers, deleteUser, updateUser} from '../services/usersService';
+import { useGenericMutation, useGenericDelete, useUpdateMutation } from './queryMutations';
 
-export const useDeleteUser = () => useGenericMutation(deleteUser, 'users');
+export const useDeleteUser = () => useGenericDelete((id) => deleteUser(id), ['fetchData', 'users']);
 export const useAddUser = () => useGenericMutation(addUser, 'users');
-// export const useEditUser = () => useGenericMutation(({ userId, data }) => editUser(userId, data), 'users');
+export const useEditUser = () => useUpdateMutation((updatedUser) => updateUser(updatedUser.id, updatedUser), ['fetchData', 'users']); //--- The key might need to be: ['fetchData', 'users', page]
