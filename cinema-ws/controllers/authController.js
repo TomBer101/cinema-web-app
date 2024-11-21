@@ -51,7 +51,7 @@ const login = async (req, res) => {
 
         req.session.cookie.maxAge =  userData.sessionTimeout * 60000;  // Convert minutes to milliseconds
         req.session.cookie._expire = new Date(Date.now() + userData.sessionTimeout * 60000); 
-
+        
         res.status(200).send({
             message: 'Login successful', 
             userName: `${userData.firstName} ${userData.lastName}`,
@@ -63,8 +63,15 @@ const login = async (req, res) => {
         
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: 'Error!'})
-    }
+        if (err.statusCode) {
+            res.status(err.statusCode).send(err.message)
+        } else {
+            res.status(500).json({message: "Eroor"})
+        }
+                  
+ 
+        
+    }  
 }
 
 module.exports = {

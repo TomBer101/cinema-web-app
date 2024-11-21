@@ -1,8 +1,11 @@
 const moviesService = require('../services/moviesServices')
 
+// TODO: 
+// 1. Add a sub query option - such as fetching only cartain feilds => add a feilds query param
+// 2. Add a sub query - by name => add a name query
 const getAllMovies = async (req, res) => {
     try {
-        const page = req.params.page || 1
+        const page = req.query.page || 1
         const movies = await moviesService.getAllMovies(page)
 
         res.status(200).json({movies})
