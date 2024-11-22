@@ -8,34 +8,49 @@ export const fetchMovies = async (page) => {
         console.error('Error fetching movies: ', err);
         return [
             {
-                "_id" : ObjectId("66e583f7d43006e1685edf39"),
-                "name" : "Arrow",
+                "_id" : "66e583f7d43006e1685edf39",
+                "name" : "Arrow1",
                 "geners" : [
                     "Drama", "Comedy", "SiFi"
                 ],
                 "image" : "https://static.tvmaze.com/uploads/images/medium_portrait/143/358967.jpg",
-                "premiered" : ISODate("2012-10-10T00:00:00.000+0000"),
-                "__v" : NumberInt(0)
+                "premiered" : ("2012-10-10"),
+                "subscriptions": [
+                    {
+                        "user": "user1",
+                        "date": "2020-01-01"
+                    },
+                    {
+                        "user": "user1",
+                        "date": "2020-01-01"
+                    },
+                    {
+                        "user": "user1",
+                        "date": "2020-01-01"
+                    },
+                    {
+                        "user": "user1",
+                        "date": "2020-01-01"
+                    }
+                ]
             },
             {
-                "_id" : ObjectId("66e583f7d43006e1685edf39"),
-                "name" : "Arrow",
+                "_id" : "66e583f7d43006e1685edf39",
+                "name" : "Arrow2",
                 "geners" : [
             
                 ],
                 "image" : "https://static.tvmaze.com/uploads/images/medium_portrait/143/358967.jpg",
-                "premiered" : ISODate("2012-10-10T00:00:00.000+0000"),
-                "__v" : NumberInt(0)
+                "premiered" : ("2012-10-10")
             },
             {
-                "_id" : ObjectId("66e583f7d43006e1685edf39"),
-                "name" : "Arrow",
+                "_id" : "66e583f7d43006e1685edf39",
+                "name" : "Arrow3",
                 "geners" : [
             
                 ],
                 "image" : "https://static.tvmaze.com/uploads/images/medium_portrait/143/358967.jpg",
-                "premiered" : ISODate("2012-10-10T00:00:00.000+0000"),
-                "__v" : NumberInt(0)
+                "premiered" : ("2012-10-10")
             }
         ]
     }
