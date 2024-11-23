@@ -4,27 +4,96 @@ const AppError = require('../classes/appError')
 
 const getAllMovies = async (page, limit) => { // TODO: add watchers data
     const skip = (page - 1) * limit
-    // try {
-    //     const movies = await Movie.aggregate([
-    //         {
-    //             $lookup: {
-    //                 from: 'subscriptions',
-    //                 let: {movieId: '$_id'},
-    //                 pipeline: [
-
-    //                 ]
-    //             }
-    //         }
-    //     ])
-    // }
-
-    // Old/Simplr version
     try {
-        const movies = await Movie.find({})
-                        .skip(skip)
-                        .limit(limit)
+        const movies = await Movie.aggregate([
+            {
+                $match: {}
+            },
+            {$skip: skip},
+            {$limit: limit},
+            // Step 1: Lookup subscriptions for each movie to get all subscriptions with matching movies
+            {
+                $lookup: {
+                    from: 'subscriptions',
+                    localField: '_id',
+                    foreignField: 'movies.movieId',
+                    as: 'subscriptions'
+                }
+            },
+            // Step 2: Unwind subscriptions array to work with each individual subscription entry
+            {
+                $unwind: {
+                    path: '$subscriptions',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            // Step 3: Unwind movies array within each subscription to access individual movie entries
+            {
+                $unwind: {
+                    path: '$subscriptions.movies',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            // Step 4: Match only movies within the subscription that correspond to the current movie ID
+            {
+                $match: {
+                    $or: [
+                        {$expr: { $eq: ['$subscriptions.movies.movieId', '$_id'] }},
+                        {'subscriptions': null}
+                    ]
+                }
+            },
+            // Step 5: Lookup member data for each subscription
+            {
+                $lookup: {
+                    from: 'members',
+                    localField: 'subscriptions.memberId',
+                    foreignField: '_id',
+                    as: 'member'
+                }
+            },
+            // Step 6: Unwind member data to link each subscription to a single member
+            {
+                $unwind: {
+                    path: '$member',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            // Step 7: Group back by movie ID, accumulating watcher data in `members`
+            {
+                $group: {
+                    _id: '$_id',
+                    name: { $first: '$name' },
+                    genres: { $first: '$genres' },
+                    image: { $first: '$image' },
+                    premiered: { $first: '$premiered' },
+                    members: {
+                        $push: {
+                            _id: '$member._id',
+                            name: '$member.name',
+                            watchedDate: '$subscriptions.movies.date'
+                        }
+                    }
+                }
+            },
+            // Step 8: Filter members to exclude empty data and retain all movies
+            {
+                $addFields: {
+                    members: {
+                        $filter: {
+                            input: '$members',
+                            as: 'member',
+                            cond: { $ne: ['$$member._id', null] }
+                        }
+                    }
+                }
+            },
+            
+        ]);
+        
+
         return movies
-    } catch (err) {
+    }catch (err) {
         console.error('Error fetching all movies: ', err);
         throw new AppError('Internal Server Error', 500)
     }
