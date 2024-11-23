@@ -4,7 +4,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 import {AuthProvider} from './contetxt/AuthContext.jsx'
-import {AddMoviePage, EditMoviePage, LoginPage,MoviesLayout, MoviesPage,RegisterPage} from './pages/index.js'
+import { LoginPage, RegisterPage} from './pages/index.js'
 
 
 import './index.css'
@@ -23,7 +23,13 @@ const ErrorPage = () => {
 
 // import {router} from './routes/router.js'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+})
 
 const router = createBrowserRouter([
   {

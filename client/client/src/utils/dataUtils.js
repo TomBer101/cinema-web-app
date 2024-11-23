@@ -47,11 +47,12 @@ export const deleteData = async (route, configs) => {
     }
 }
 
-export const fetchData = async (route, page = 1) => {
+export const fetchData = async (route, page = 1, query) => {
     try {
         const {data, status} = await apiClient.get(route, {
             params: {
-                page
+                page,
+                ...query
             }
         })
 
