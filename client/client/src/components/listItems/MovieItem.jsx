@@ -28,18 +28,18 @@ const MovieItem = ({id, name, generes, image, premiered, subscriptions}) => {
             gap: '1vh'
         }}>
             <Typography variant='h4'>{`${name}, ${premiered}`}</Typography>
-            <Typography variant='p'>{generes}</Typography>
+            <Typography variant='p'>{generes?.map(g => <span kye={g}>{g}</span>)}</Typography>
             <div>
-                <img src={image} />
+                <img style={{height: '10rem'}} src={image} />
                 <div>
                     Subscriptions: <br/>
-                    <ul>
+                    <ul style={{maxHeight: '8rem', overflowY: 'auto'}}>
                         {
-                            subscriptions.map((sub, index) => {
+                            subscriptions?.map((sub, index) =>  (
                                 <li key={index}>
-                                    {sub}
-                                </li>
-                            })
+                                    <p>{`${sub.user}, ${sub.date}`}</p>
+                                </li>)
+                            )
                         }
                     </ul>
                 </div>
