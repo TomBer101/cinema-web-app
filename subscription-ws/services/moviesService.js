@@ -9,6 +9,8 @@ const getAllMovies = async (page, limit) => { // TODO: add watchers data
             {
                 $match: {}
             },
+            {$skip: skip},
+            {$limit: limit},
             // Step 1: Lookup subscriptions for each movie to get all subscriptions with matching movies
             {
                 $lookup: {
@@ -35,7 +37,10 @@ const getAllMovies = async (page, limit) => { // TODO: add watchers data
             // Step 4: Match only movies within the subscription that correspond to the current movie ID
             {
                 $match: {
-                    $expr: { $eq: ['$subscriptions.movies.movieId', '$_id'] }
+                    $or: [
+                        {$expr: { $eq: ['$subscriptions.movies.movieId', '$_id'] }},
+                        {'subscriptions': null}
+                    ]
                 }
             },
             // Step 5: Lookup member data for each subscription
@@ -82,7 +87,8 @@ const getAllMovies = async (page, limit) => { // TODO: add watchers data
                         }
                     }
                 }
-            }
+            },
+            
         ]);
         
 
