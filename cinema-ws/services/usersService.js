@@ -50,7 +50,7 @@ const updateUser = async (userId, userData, permissionsData) => {
         if (updatedUser && updatedPermissions) {
             return {
                 userId,
-                ...userData,
+                userData,
                 permissions: permissionsData
             }
         }

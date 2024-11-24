@@ -39,12 +39,12 @@ const createUser = async (req, res) => {
     }
 }
 
-const updateUser = () => {
+const updateUser = async (req, res) => {
     try {
-        const {updatedData, updatedPermissions} = req.body
+        const {userData, userPermissions} = req.body
         const {userId} = req.params
 
-        const updatedUser = usersService.updateUser(userId, updatedData, updatedPermissions)
+        const updatedUser = await usersService.updateUser(userId, userData, userPermissions)
 
         if (updatedUser)  res.status(200).json({message: 'User Updated', user: updatedUser})
 
