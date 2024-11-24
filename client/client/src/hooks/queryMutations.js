@@ -16,7 +16,7 @@ export function useUpdateMutation(mutationFn, queryKey) {
     return useMutation(mutationFn, {
         onMutate: async (updatedItem) => {
             await queryClient.cancelQueries(queryKey, {exact: false})
-            const prevData = queryClient.getQueryData(queryKey)
+            const prevData = queryClient.getQueryData(queryKey, {exact: false})
 
             queryClient.setQueriesData({queryKey, exact: false}, (old) => 
                 old? old.map(item => item.id === updatedItem.id? {...item, ...updatedItem} : item) : []
@@ -27,7 +27,9 @@ export function useUpdateMutation(mutationFn, queryKey) {
         onError: (err, newData, context) => {
             console.error(`Error edit mutating ${queryKey}: `, err)
             queryClient.setQueryData(queryKey, context.prevData)
-        }
+        },
+
+        // onSuccess: data => { console.log(data)}
     })
 }
 

@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormInputText } from './forms-components/FormInputText';
 import { FormInputCheckbox } from './forms-components/FormInputCheckbox';
-import { useAddUser } from '../../hooks/useUserMutations';
+import { useAddUser, useEditUser } from '../../hooks/useUserMutations';
 import { useMutation } from 'react-query';
-import { addUser } from '../../services/usersService';
+import { addUser, updateUser } from '../../services/usersService';
 
 const PERMISSIONS_OPTIONS = {
     viewSubscriptions: "View Subscriptions",
@@ -38,12 +38,20 @@ const UserForm = (props) => {
 
     const [errorMessage, setErrorMessage] = useState(null)
     
-        const addUserMutation = useMutation({
-            mutationFn: (data) => {
-                return addUser(data)
-            },
-            
-        })
+    const addUserMutation = useMutation({
+        mutationFn: (data) => {
+            return addUser(data)
+        },
+        
+    })
+
+    const {data: updateRes, mutate: editUserMutation, isSuccess} = useEditUser()
+
+    // const editUserMutation = useMutation({
+    //     mutationFn: (data) => {
+    //         return updateUser(props.id, data)
+    //     }
+    // })
     
 
 
@@ -86,15 +94,19 @@ const UserForm = (props) => {
           .filter(key => formData[key]) // Filter out unchecked permissions
           .map(key => PERMISSIONS_OPTIONS[key]);
       
-        return { userData, userPermissions };
-      }
+        return { userData, userPermissions, id: props.id };
+    }
 
     const onSubmitHandler = (data) => {
         console.log('Form Submitted: ', data);
         const formattedData = transformUserData(data)
-        
+
         if (props.id) {
-            console.log('Need to patch/update data in the server');
+            editUserMutation(formattedData)
+            if (isSuccess) {
+                console.log(updateRes)
+            }
+            
         } else {
             addUserMutation.mutate(formattedData)
         }
