@@ -78,7 +78,7 @@ const ViewPage = () => {
         <div style={{padding: '0 3rem', position: 'relative'}}>
             <Typography variant='h3'>{`All ${type}`}</Typography>
             <SearchBar onClick={handleSearch}/>
-            <Box>
+            <Box sx={{display: !searchResult? 'none' : 'block'}}>
                 {<ItemFactory type={type} props={searchResult} />}
             </Box>
             <List>

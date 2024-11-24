@@ -1,9 +1,11 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React from 'react';
 import { NavLink, Outlet, useParams} from 'react-router-dom'
 
 import { useAuth } from '../../contetxt/AuthContext';
 
+// TODO: 
+// 1. Add access to links based on currentUser permissions.
 
 const PageLayout = () => {
     const {currentUser} = useAuth()

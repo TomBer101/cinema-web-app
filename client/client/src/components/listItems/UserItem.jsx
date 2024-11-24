@@ -35,7 +35,7 @@ const UserItem = ({id, firstName, lastName, userName, createdDate, sessionTimeou
             <p><strong>Username: </strong>{userName}</p>
             <p><strong>Session timeout: </strong>{sessionTimeout}</p>
             <p><strong>Created Date: </strong>{createdDate}</p>
-            <p><strong>Permissions: </strong>{permissions?.map((per) => <p>{per}</p>)}</p>
+            <p><strong>Permissions: </strong>{permissions?.map((per) => <p key={per}>{per}</p>)}</p>
 
             <div className="buttons" style={{display: 'flex', justifyContent: 'space-between'}}>
                 <button onClick={(e) => handleDelete(e)}>Delete</button>

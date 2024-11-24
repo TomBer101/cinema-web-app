@@ -3,28 +3,37 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FormInputText } from './forms-components/FormInputText';
 import { FormInputCheckbox } from './forms-components/FormInputCheckbox';
+import { useAddUser } from '../../hooks/useUserMutations';
+import { useMutation } from 'react-query';
+import { addUser } from '../../services/usersService';
 
 const UserForm = (props) => {
     const { setValue, control, handleSubmit, watch, reset, formState: {errors}, getValues} = useForm({
         defaultValues: {
             firstName: props.firstName || '',
             lastName: props.lastName || '',
-            userName: props.userName || 'No "username" in props',
+            userName: props.userName || '',
             sessionTimeout: props.sessionTimeout || '',
-            viewSubscriptions: props.permissions.includes("View Subscriptions" ),
-            createSubscriptions: props.permissions.includes("Create Subscriptions" ),
-            deleteSubscriptions: props.permissions.includes("Delete Subscriptions" ),
-            updateSubscriptions: props.permissions.includes("Update Subscriptions" ),
-            viewMovies: props.permissions.includes("View Movies" ),
-            createMovies: props.permissions.includes("Create Movies" ),
-            deleteMovies: props.permissions.includes("Delete Movies" ),
-            updateMovies: props.permissions.includes("Update Movies" ),
+            viewSubscriptions: props.permissions?.includes("View Subscriptions" )  || false,
+            createSubscriptions: props.permissions?.includes("Create Subscriptions" )  || false,
+            deleteSubscriptions: props.permissions?.includes("Delete Subscriptions" )  || false,
+            updateSubscriptions: props.permissions?.includes("Update Subscriptions" )  || false,
+            viewMovies: props.permissions?.includes("View Movies" )  || false,
+            createMovies: props.permissions?.includes("Create Movies" )  || false,
+            deleteMovies: props.permissions?.includes("Delete Movies" )  || false,
+            updateMovies: props.permissions?.includes("Update Movies" )  || false,
         },
     })
 
     const [errorMessage, setErrorMessage] = useState(null)
-
-   
+    
+        const addUserMutation = useMutation({
+            mutationFn: (data) => {
+                return addUser(data)
+            },
+            
+        })
+    
 
 
     useEffect(() => {
@@ -54,6 +63,11 @@ const UserForm = (props) => {
 
     const onSubmitHandler = (data) => {
         console.log('Form Submitted: ', data);
+        if (props.id) {
+            console.log('Need to patch/update data in the server');
+        } else {
+            addUserMutation.mutate(data)
+        }
         
     }
 
@@ -62,7 +76,6 @@ const UserForm = (props) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <button onClick={() => console.table('Form val: ', getValues())}>Get form values</button>
 
             <FormInputText control={control} label={"First Name"} name={"firstName"} />
             <FormInputText control={control} label={"Last Name"} name={"lastName"} />
