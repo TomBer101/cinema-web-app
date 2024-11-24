@@ -7,6 +7,17 @@ import { useAddUser } from '../../hooks/useUserMutations';
 import { useMutation } from 'react-query';
 import { addUser } from '../../services/usersService';
 
+const PERMISSIONS_OPTIONS = {
+    viewSubscriptions: "View Subscriptions",
+    createSubscriptions: "Create Subscriptions",
+    deleteSubscriptions: "Delete Subscriptions",
+    updateSubscriptions: "Update Subscriptions",
+    viewMovies: "View Movies",
+    createMovies: "Create Movies",
+    deleteMovies: "Delete Movies",
+    updateMovies: "Update Movies" 
+}
+
 const UserForm = (props) => {
     const { setValue, control, handleSubmit, watch, reset, formState: {errors}, getValues} = useForm({
         defaultValues: {
@@ -61,12 +72,31 @@ const UserForm = (props) => {
         
     }, [subscriptionsWatcher, setValue])
 
+    const transformUserData = (formData) => {
+        const userData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          userName: formData.userName,
+          sessionTimeout: formData.sessionTimeout,   
+      
+        };
+      
+        const userPermissions = Object.keys(formData)
+          .filter(key => key !== 'firstName' && key !== 'lastName' && key !== 'userName' && key !== 'sessionTimeout')
+          .filter(key => formData[key]) // Filter out unchecked permissions
+          .map(key => PERMISSIONS_OPTIONS[key]);
+      
+        return { userData, userPermissions };
+      }
+
     const onSubmitHandler = (data) => {
         console.log('Form Submitted: ', data);
+        const formattedData = transformUserData(data)
+        
         if (props.id) {
             console.log('Need to patch/update data in the server');
         } else {
-            addUserMutation.mutate(data)
+            addUserMutation.mutate(formattedData)
         }
         
     }
