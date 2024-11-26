@@ -2,7 +2,7 @@ import { Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 
 
-export const FormInputText = ({name, control, label}) => {
+export const FormInputText = ({name, control, label, required}) => {
     return (
         <Controller
             name={name}
@@ -19,6 +19,7 @@ export const FormInputText = ({name, control, label}) => {
                     value={value}
                     fullWidth
                     label={label}
+                    required={required}
                     variant="outlined" />
                     
             )}/>

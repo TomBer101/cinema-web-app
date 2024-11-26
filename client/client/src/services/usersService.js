@@ -13,7 +13,10 @@ export const fetchUsers = async (page) => {
                     "id":"670a687767f371d2a83effac","createdDate":"10/12/2024",
                     "firstName":"add","lastName":"user","userName":"added user","sessionTimeout":2},{
                         "id":"670a687767f371d2a83effac","createdDate":"10/12/2024",
-                        "firstName":"add","lastName":"user","userName":"added user","sessionTimeout":2}
+                        "firstName":"add","lastName":"user","userName":"added user","sessionTimeout":2},
+                        {
+                            "id":"670a687767f371d3effac","createdDate":"10/12/2024",
+                            "firstName":"add","lastName":"user","userName":"REMAIN","sessionTimeout":2}
         ]
         
     }
@@ -24,7 +27,7 @@ export const fetchUsers = async (page) => {
 export const addUser = async (newUser) => {
    
         const response = await postData('/users', newUser)
-    return response
+    return response.data.data
     
     
 }

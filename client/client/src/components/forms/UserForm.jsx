@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { FormInputText } from './forms-components/FormInputText';
 import { FormInputCheckbox } from './forms-components/FormInputCheckbox';
 import { useAddUser, useEditUser } from '../../hooks/useUserMutations';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { addUser, updateUser } from '../../services/usersService';
 
 const PERMISSIONS_OPTIONS = {
@@ -35,6 +35,7 @@ const UserForm = (props) => {
             updateMovies: props.permissions?.includes("Update Movies" )  || false,
         },
     })
+    const queryClient = useQueryClient()
 
     const [errorMessage, setErrorMessage] = useState(null)
     
@@ -42,7 +43,18 @@ const UserForm = (props) => {
         mutationFn: (data) => {
             return addUser(data)
         },
-        
+        onSuccess: (newUser) => {
+            queryClient.setQueriesData(
+                { queryKey: ['fetchData', 'users'], exact: false },
+                (oldData) => {
+                    if (!oldData || oldData.length === 0) return [newUser]; // Initialize with the new user if no data exists
+                    
+                    // Add the user to the beginning of the first page only
+                    
+                    return [newUser, ...oldData]
+                }
+            );
+        },
     })
 
     const {data: updateRes, mutate: editUserMutation, isSuccess} = useEditUser()
@@ -121,7 +133,7 @@ const UserForm = (props) => {
 
             <FormInputText control={control} label={"First Name"} name={"firstName"} />
             <FormInputText control={control} label={"Last Name"} name={"lastName"} />
-            <FormInputText control={control} label={"User Name"} name={'userName'} />
+            <FormInputText control={control} required={true} label={"User Name"} name={'userName'} />
             <FormInputText control={control} label={"Session timeout (minutes)"} name={"sessionTimeout"} />
 
             <Typography variant='h4'>Permissions:</Typography>
