@@ -79,7 +79,11 @@ const addUser = async (userData, userPermissions) => {
         const isAddedUser = usersRepo.addUser(mongoId, userData)
         const isAddedPermissions = permissionsRepo.addUserPermissions(mongoId, userPermissions)
 
-        return isAddedPermissions && isAddedUser
+        if (isAddedPermissions && isAddedUser) {
+            return {
+                userData, userPermissions, userId: mongoId
+            }
+        }
     } catch (err) {
         console.error('Error adding new user: ', err);
         return false

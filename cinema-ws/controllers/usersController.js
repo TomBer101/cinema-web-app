@@ -29,7 +29,7 @@ const createUser = async (req, res) => {
 
         const isCreated = await usersService.addUser(userData, userPermissions)
         if (isCreated) {
-            res.status(200).json({message: 'User has been added'})
+            res.status(200).json({data: isCreated})
         } else {
             res.status(400).json({message: 'Error adding new user'})
         }
