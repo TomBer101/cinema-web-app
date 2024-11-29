@@ -29,7 +29,7 @@ const ViewPage = () => {
         return queryClient.getQueryData(key);
     };
 
-    const {data, error, isLoading} = useQuery({
+    const {data, error, isLoading, status} = useQuery({
         queryKey: ['fetchData', type, page], 
         queryFn: async () => {
             const cache = getFromCache(['fetchData', type, page])
@@ -38,7 +38,7 @@ const ViewPage = () => {
             return fetchDataByType()
         },
         enabled: !!type,
-        keepPreviousData: true
+        keepPreviousData: true,
     })
 
     const {data: searchResult, refetch: searchMovie} = useQuery({
