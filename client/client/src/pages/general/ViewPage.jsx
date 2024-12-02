@@ -1,25 +1,29 @@
 import { ListItem, List, Typography, TextField, Box } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
 
 import { fetchMovies } from '../../services/moviesService';
-import { useQuery, useQueryClient } from 'react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { fetchUsers } from '../../services/usersService';
 import ItemFactory from '../../components/listItems/ItemFactory';
 import SearchBar from '../../components/common/SearchBar';
+
+const MAX_ENTITIES_PER_PAGE  = 10
 
 const ViewPage = () => {
     const {type} = useParams()
     const [searchTerm, setSearchTerm] = useState('')
     const queryClient = useQueryClient()
-    const [page, setPage] = useState(1)
+    const { ref, inView } = useInView()
+    const observer = useRef(null)
 
-    const fetchDataByType = async () => {
+    const fetchDataByType = async ({pageParam }) => {
         switch (type) {
             case 'movies': 
-                return await fetchMovies(page, searchTerm)
+                return await fetchMovies(pageParam , searchTerm)
             case 'users':
-                return await fetchUsers(page)
+                return await fetchUsers(pageParam )
             default:
                 throw new Error(`Unknown type: ${type}`)
         }
@@ -29,17 +33,37 @@ const ViewPage = () => {
         return queryClient.getQueryData(key);
     };
 
-    const {data, error, isLoading, status} = useQuery({
-        queryKey: ['fetchData', type, page], 
-        queryFn: async () => {
-            const cache = getFromCache(['fetchData', type, page])
-            if (cache) return cache
-
-            return fetchDataByType()
+    const {data, error, status, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, page} = useInfiniteQuery({
+        queryKey: ['fetchData', type],
+        queryFn: fetchDataByType,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, pages) => {
+            const nextPage = lastPage.length? pages.length + 1 : undefined;
+            return nextPage
         },
-        enabled: !!type,
-        keepPreviousData: true,
     })
+
+    // const content = data?.pages.map((items) => {
+    //     items.map((item, index) => {
+    //         if (items.length === index + 1) {
+    //             return (<ListItem ref={ref} key={index}>
+    //                 <ItemFactory props={item} type={type}/>
+    //             </ListItem>)
+    //         }
+    //         return (<ListItem key={index}>
+    //         <ItemFactory props={item} type={type}/>
+    //     </ListItem>)
+    //     })
+    // })
+
+    useEffect(() => {
+        if (inView && hasNextPage) {
+          console.log('Fire!');
+          fetchNextPage();
+        }
+    }, [inView, hasNextPage, fetchNextPage]);
+    const items = data? data.pages.flatMap(page => page) : []
+   
 
     const {data: searchResult, refetch: searchMovie} = useQuery({
         queryKey: ['search', type],
@@ -83,10 +107,25 @@ const ViewPage = () => {
             </Box>
             <List>
                 {
-                    data?.map((entity, index) => 
-                    <ListItem key={index}>
-                        {<ItemFactory type={type} props={entity} />}
-                    </ListItem>)
+                   
+                        items?.map((item, index) => {
+                            if (items.length === index + 1) {
+                                return (
+                                <ListItem ref={ref} key={index}>
+                                    <ItemFactory props={item} type={type}/>
+                                </ListItem>
+                                )
+                            }
+                            return (
+                                <ListItem key={index}>
+                                    <ItemFactory props={item} type={type}/>
+                                </ListItem>
+                            )
+                        })
+                    
+                }
+                {
+                   hasNextPage && <div ref={observer} >Loading more...</div>
                 }
             </List>
         </div>
