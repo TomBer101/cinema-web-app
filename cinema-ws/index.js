@@ -13,7 +13,8 @@ const authMiddleware = require('./middlewares/authMiddlewares')
 
 const PORT = 8080;
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173', credentials: true })); // Adjust the origin if necessary
+
+app.use(cors({ origin: 'http://localhost:5174', credentials: true })); // Adjust the origin if necessary
 configDB.connectDB();
 
 app.use(express.json())
