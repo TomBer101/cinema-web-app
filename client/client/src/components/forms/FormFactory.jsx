@@ -1,5 +1,6 @@
 import Card from '@mui/material/Card'
 import UserForm from './UserForm'
+import MovieForm from './MovieForm';
 
 
 const FormFactory = ({type, props}) => {
@@ -8,6 +9,9 @@ const FormFactory = ({type, props}) => {
     switch (type) {
         case 'users': 
             formComponent = <UserForm {...props} />
+            break;
+        case 'movies':
+            formComponent = <MovieForm {...props} />
             break;
         default:
             formComponent = <p>{`Type ${type} is Unknown`}</p>

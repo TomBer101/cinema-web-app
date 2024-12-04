@@ -16,7 +16,7 @@ export const postData = async (route, data) => {
             statusCode: response.status
         }
     } catch (err) {
-        console.error(`POST request to ${route} failed: `. err)
+        console.error(`POST request to ${route} failed: `, err)
         throw err
     }
 }

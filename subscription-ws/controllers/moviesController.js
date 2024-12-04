@@ -15,7 +15,7 @@ const getAllMovies = async (req, res) => {
 }
 
 const addMovie = async (req, res) => {
-    const {movieInfo} = req.body
+    const movieInfo = req.body
 
     try {
         const newMovie = await moviesService.addMovie(movieInfo)
