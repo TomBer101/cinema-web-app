@@ -21,21 +21,18 @@ const connectDB = async () => {
 
 const populateDB = async () => {
     try {
-        const {data: members} = await membresRepo.populateMemebers();
-        const movies = await moviesRepo.populateMovies()
+        const amountOfMembers = await Member.countDocuments({})
+        if (amountOfMembers === 0) {
+            const {data: members} = await membresRepo.populateMemebers();   
+            Member.insertMany(members).catch(err => console.error('Error saving member: ', err))
+        }
 
-        // members.forEach(member => {
-        //     const newMember = new Member(member)
-        //     newMember.save().catch(err => console.error('Error saving member: ', err))
-        // });
+        const amoountOfMovies = await Movie.countDocuments({})
+        if (amoountOfMovies === 0) {
+            const movies = await moviesRepo.populateMovies()
+            Movie.insertMany(movies).catch(err => console.error('Error saving movie: ', err))
 
-        // movies.forEach(movie => {
-        //     const newMovie = new Movie(movie)
-        //     newMovie.save().catch(err => console.error('Error saving movie: ', err))
-        // })
-
-        Member.insertMany(members).catch(err => console.error('Error saving member: ', err))
-        Movie.insertMany(movies).catch(err => console.error('Error saving movie: ', err))
+        }
 
     } catch (err) {
         console.error(err)
