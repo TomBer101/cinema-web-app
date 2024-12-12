@@ -14,7 +14,7 @@ const ViewPage = () => {
     const queryClient = useQueryClient()
     const [page, setPage] = useState(1)
 
-    const fetchDataByType = async () => {
+    const fetchDataByType = async (searchTerm) => {
         switch (type) {
             case 'movies': 
                 return await fetchMovies(page, searchTerm)
@@ -43,8 +43,8 @@ const ViewPage = () => {
 
     const {data: searchResult, refetch: searchMovie} = useQuery({
         queryKey: ['search', type],
-        queryFn: () => fetchDataByType(),
-        enabled: false
+        queryFn: ({meta}) => fetchDataByType(meta.searchTerm),
+        enabled: !!searchTerm
     });
 
     const handleSearch = async (searchTerm) => {
@@ -61,7 +61,7 @@ const ViewPage = () => {
         }
 
         // Fetch the movie if not found
-        const result = await searchMovie();
+        const result = await searchMovie({meta: {searchTerm}});
         console.log('Movie fetched from server:', result);
 
         // Add the result to the cached data
@@ -82,7 +82,7 @@ const ViewPage = () => {
                 {<ItemFactory type={type} props={searchResult} />}
             </Box>
             <List>
-                {
+                {   !searchResult && 
                     data?.map((entity, index) => 
                     <ListItem key={index}>
                         {<ItemFactory type={type} props={entity} />}
