@@ -40,10 +40,27 @@ const LoginPage = () => {
 
 
     return (
-        <Container>
+        <div style={{
+            height: '100%',
+            padding: '2rem'
+        }}>
             <Box>
-                <Typography variant='h1'>Movies Subscription Web Site</Typography>
-                <Box component='form' onSubmit={handleSubmit(onSubmit)}>
+                <Typography variant='h1' fontSize='3.7rem' fontWeight='500'>Movies Subscription Web Site</Typography>
+                <Box 
+                    component='form' 
+                    onSubmit={handleSubmit(onSubmit)}
+                    sx={{
+                        justifyContent: 'center',
+                        justifyItems: 'center',
+                        minHeight: '40vh',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '5vh',
+                        width: 'fit-content',
+                        m: 'auto',
+                        p: '0 2rem'
+                    }}
+                >
                     <div>
                         <label htmlFor='username'>Username:</label>
                         <input
@@ -92,7 +109,7 @@ const LoginPage = () => {
                     </Box>
                 </Modal>
             </Box>
-        </Container>
+        </div>
     );
 };
 
