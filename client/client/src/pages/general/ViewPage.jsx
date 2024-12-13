@@ -1,12 +1,14 @@
 import { ListItem, List, Typography, TextField, Box } from '@mui/material';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQuery, useQueryClient } from 'react-query';
+
 
 import { fetchMovies } from '../../services/moviesService';
-import { useQuery, useQueryClient } from 'react-query';
 import { fetchUsers } from '../../services/usersService';
 import ItemFactory from '../../components/listItems/ItemFactory';
 import SearchBar from '../../components/common/SearchBar';
+import { fetchSubscriptions } from '../../services/subscriptionsService';
 
 const ViewPage = () => {
     const {type} = useParams()
@@ -20,6 +22,8 @@ const ViewPage = () => {
                 return await fetchMovies(page, searchTerm)
             case 'users':
                 return await fetchUsers(page)
+            case 'subscriptions': 
+                return await fetchSubscriptions(page)
             default:
                 throw new Error(`Unknown type: ${type}`)
         }

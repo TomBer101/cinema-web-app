@@ -1,6 +1,7 @@
 import { Card } from "@mui/material"
 import MovieItem from "./MovieItem"
 import UserItem from "./UserItem"
+import SubscriptionItem from "./SubscriptionItem"
 
 const ItemFactory = ({type, props}) => {
 
@@ -15,6 +16,9 @@ const ItemFactory = ({type, props}) => {
             break
         case 'users':
             itemComponent = <UserItem {...props} />
+            break
+        case 'subscriptions':
+            itemComponent = <SubscriptionItem {...props} />
             break
         default:
             itemComponent =<p>{`Type ${type} is Unknown`}</p>
