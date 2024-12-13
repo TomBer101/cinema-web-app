@@ -1,15 +1,76 @@
 const Member = require('../models/memberModel')
 const AppError = require('../classes/appError')
 
+// TO DO: add caching?
+
 const getAllMembers = async (page, limit) => {
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
 
     try {
-        const members = await Member.find({}).skip(skip).limit(limit)
+        const members = await Member.aggregate([
+            { $match: {} },            
+            {$skip: skip},
+            {$limit: limit},
+            {
+                $lookup: {
+                    from: 'subscriptions',
+                    localField: '_id',
+                    foreignField: 'memberId',
+                    as: 'subscriptions'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$subscriptions',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'movies',
+                    localField: 'subscriptions.movies.movieId',
+                    foreignField: '_id',
+                    as: 'movies'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$movies',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    name: {$first: '$name'},
+                    email: {$first: '$email'},
+                    city: {$first: '$city'},
+                    movies: {
+                        $push: {
+                            _id: '$movies._id',
+                            name: '$movies.name',
+                            watchDate: { $arrayElemAt: ['$subscriptions.movies.date', 0] }
+                        }
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    movies: {
+                        $cond: {
+                            if: { $eq: ['$movies', [{}]] }, // If the movies array contains an empty object
+                            then: [], // Replace with an empty array
+                            else: '$movies' // Otherwise, keep the movies array as is
+                        }
+                    }
+                }
+            }
+        ])
+
         return members
     } catch (err) {
         console.error('Error fetching all members: ', err);
-        throw new AppError('Internal Server Error', 500)
+        throw new AppError('InternalServer Error', 500)
         
     }
 }
