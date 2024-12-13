@@ -80,11 +80,12 @@ const getAllMovies = async (page, limit) => { // TODO: add watchers data
             {
                 $addFields: {
                     members: {
-                        $filter: {
-                            input: '$members',
-                            as: 'member',
-                            cond: { $ne: ['$$member._id', null] }
+                        $cond: {
+                            if: { $eq: ['$members', [{}]] }, // If the movies array contains an empty object
+                            then: [], // Replace with an empty array
+                            else: '$members' // Otherwise, keep the movies array as is
                         }
+                        
                     }
                 }
             },
