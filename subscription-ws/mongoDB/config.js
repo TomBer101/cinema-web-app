@@ -23,7 +23,12 @@ const populateDB = async () => {
     try {
         const amountOfMembers = await Member.countDocuments({})
         if (amountOfMembers === 0) {
-            const {data: members} = await membresRepo.populateMemebers();   
+            let {data: members} = await membresRepo.populateMemebers();   
+            members = members.map(member => ({
+                name: member.name,
+                email: member.email,
+                city: member.address.city
+            }))
             Member.insertMany(members).catch(err => console.error('Error saving member: ', err))
         }
 
