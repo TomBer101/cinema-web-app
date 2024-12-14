@@ -169,9 +169,20 @@ const deleteMovie = async (movieId) => {
     }
 }
 
+const getMoviesName = async () => {
+    try {
+        const moviesNames = await Movie.find({}).projection({name: 1});
+        return moviesNames;
+    } catch (err) {
+        console.error('Error getting movies names');
+        throw new AppError('Internal Server Error', 500);
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
     deleteMovie,
+    getMoviesName
 }

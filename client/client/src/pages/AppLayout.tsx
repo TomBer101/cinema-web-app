@@ -13,7 +13,7 @@ const AppLayout = () => {
             <Typography sx={{backgroundColor: 'aliceblue',fontSize: '3.5rem', fontWeight: 400, padding: '2rem', textAlign: 'center'}} variant='h1'>Movies - Subscriptions Web Site</Typography>
             <Stack direction='row' sx={{backgroundColor: '#b0cce5',padding: '1rem 2rem', justifyContent: 'space-around'}}>
                 <NavLink to='/movies'>Movies</NavLink>
-                <NavLink to='/subscription'>Subscription</NavLink>
+                <NavLink to='/subscriptions'>Subscription</NavLink>
                 { currentUser.admin &&
                     <NavLink to='/users'>Users Managment</NavLink>
                 }
