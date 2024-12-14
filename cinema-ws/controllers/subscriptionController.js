@@ -18,6 +18,13 @@ const addSubscription = async (req, res) => {
     }
 }
 
+const getAllSubscriptions = async (req, res) => {
+    res.redirect('/api/members')
+}
+
+
+
 module.exports = {
-    addSubscription
+    addSubscription,
+    getAllSubscriptions
 }
