@@ -14,7 +14,7 @@ const authMiddleware = require('./middlewares/authMiddlewares')
 const PORT = 8080;
 const app = express();
 
-app.use(cors({ origin: 'http://localhost:5174', credentials: true })); // Adjust the origin if necessary
+app.use(cors({ origin: ['http://localhost:5174', 'http://localhost:5173'], credentials: true })); // Adjust the origin if necessary
 configDB.connectDB();
 
 app.use(express.json())
@@ -30,7 +30,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
 app.use('/api/movies', moviesRouter)
 app.use('/api/members', membersRouter)
-app.use('/api/subscription', subscriptionRouter)
+app.use('/api/subscriptions', subscriptionRouter)
 
 app.get('/test',(req, res) => {
     res.status(200).json({message: 'harray'})
