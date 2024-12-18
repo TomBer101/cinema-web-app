@@ -13,7 +13,12 @@ const getAllMembers = async (pageNumber) => {
         try {
             const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
             const {members} = await dataUtils.getData('members', 300, requestedPage)
-            membersCache = [...membersCache, ...members]
+
+            const transformedMembers = members.map(({_id, ...rest}) => ({
+                ...rest,
+                id: _id,
+            }))
+            membersCache = [...membersCache, ...transformedMembers]
         } catch (err) {
             console.error('Error fetching members: ', err);
             throw new AppError('Error fetching membres', 500)

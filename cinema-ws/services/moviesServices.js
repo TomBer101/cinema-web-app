@@ -22,7 +22,12 @@ const getAllMovies = async (pageNumber) => {
         try {
             const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
             const {movies} = await dataUtils.getData('movies', 300, requestedPage)
-            movieCache = [...movieCache, ...movies]
+
+            const transformedMovies = movies.map(({_id, ...rest}) => ({
+                ...rest,
+                id: _id,
+            }))
+            movieCache = [...movieCache, ...transformedMovies]
         } catch (err) {
             console.error('Error fetching movies');
             throw new AppError.AppError('Error fetching movies', 500)
