@@ -7,7 +7,7 @@ const ItemFactory = ({type, props}) => {
 
     let itemComponent
 
-    console.log("Item Factory props: ", props);
+    //console.log("Item Factory props: ", props);
     
 
     switch (type) {

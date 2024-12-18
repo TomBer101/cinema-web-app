@@ -1,4 +1,5 @@
 const membersService = require('../services/membersService')
+const subscriptionsService = require('../services/subscriptionService')
 
 const getAllMembers = async (req, res) => {
     const page = parseInt(req.query.page) || 1
@@ -15,7 +16,7 @@ const getAllMembers = async (req, res) => {
 }
 
 const addMember = async (req, res) => {
-    const {memberInfo} = req.body
+    const memberInfo = req.body
 
     try {
         const newMember = await membersService.addMember(memberInfo)
@@ -49,6 +50,12 @@ const deleteMember = async (req, res) => {
 
     try {
         const result = await membersService.deleteMember(memberId)
+        //const deletedSubscription = await subscriptionsService.deleteSubscription(memberId)
+
+        // if (deletedSubscription === 0 ) {
+        //     console.log('Memeber had no subscriptions');
+        // }
+
         res.status(200).json(result)
     } catch (err) {
         res.status(500).json({message: 'Error deleting member ' + memberId})

@@ -41,12 +41,26 @@ export function useGenericDelete(mutationFn, queryKey) {
             await queryClient.cancelQueries(queryKey, {exact: false});
 
             const previousData = queryClient.getQueryData(queryKey, {exact: false});
+            const updatedPages = previousData.pages.map(page => {
+                const itemIndex = page.findIndex(item => item.id === id)
 
-            queryClient.setQueriesData({queryKey, exact: false}, (old) =>
-                old ? old.filter(item => item.id !== id) : []
-            );
+                if (itemIndex !== -1) {
+                    return [...page.slice(0, itemIndex), ...page.slice(itemIndex + 1)]
+                }
 
+                return page
+            });
+
+
+
+            queryClient.setQueryData(queryKey, {
+                ...previousData,
+                pages: updatedPages,
+            });
+
+            // Return the previous data for rollback
             return { previousData };
+
         },
         onError: (err, id, context) => {
             console.error(`Error delete mutating ${queryKey}: `, err)

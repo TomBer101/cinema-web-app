@@ -3,11 +3,14 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography';
 import { List } from '@mui/material';
 
+import { useDeleteMember } from '../../hooks/useMembersMutations';
 
 const SubscriptionItem = ({id, name, email, city, movies}) => {
-
+    const {mutate: deleteMember} = useDeleteMember()
 
     const handleDelete = (event) => {
+        event.preventDefault()
+        deleteMember(id)
     }
 
     const handleEditOnClick = () => {
@@ -33,9 +36,9 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
             <List sx={{maxHeight: '8rem', overflowY: 'auto'}}>
                 {
                     movies?.map((movie, index) => {
-                        <li key={index}>
-                            <p>{`${movie.name}, ${movie.date}`}</p>
-                        </li>
+                        return (<li key={index}>
+                            <p>{`${movie.name}, ${movie.watchDate}`}</p>
+                        </li>)
                     })
                 }
             </List>

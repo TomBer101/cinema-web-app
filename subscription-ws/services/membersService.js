@@ -1,4 +1,5 @@
 const Member = require('../models/memberModel')
+const Subscription = require('../models/subscriptionModel')
 const AppError = require('../classes/appError')
 
 // TO DO: add caching?
@@ -26,6 +27,12 @@ const getAllMembers = async (page, limit) => {
                 }
             },
             {
+                $unwind: {
+                    path: '$subscriptions.movies',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
                 $lookup: {
                     from: 'movies',
                     localField: 'subscriptions.movies.movieId',
@@ -49,7 +56,7 @@ const getAllMembers = async (page, limit) => {
                         $push: {
                             _id: '$movies._id',
                             name: '$movies.name',
-                            watchDate: { $arrayElemAt: ['$subscriptions.movies.date', 0] }
+                            watchDate: '$subscriptions.movies.date'
                         }
                     }
                 }
@@ -77,7 +84,7 @@ const getAllMembers = async (page, limit) => {
 
 const addMember = async ({name, email, city}) => {
     try {
-        const existedMember = await Member.find({email})
+        const existedMember = await Member.findOne({email: email})
 
         if (existedMember) {
             throw new AppError('Email is already in use', 400)
@@ -137,15 +144,27 @@ const updateMember = async (memberId, updatedData) => {
 const deleteMember = async (memberId) => {
     try {
         const deletedMember = await Member.findByIdAndDelete(memberId)
-
-        if (!deleteMember) {
-            throw new Error("Member not found")
+        if (!deletedMember) {
+            throw new AppError("Member not found", 403)
         }
 
-        return {success: true, message: 'Member was deletes'}
+        const deletedSubscription = await Subscription.findOneAndDelete({memberId: memberId})
+        if (!deletedSubscription) {
+            console.log(`Member ${memberId} had no subscriptions`);
+        } else {
+            console.log(`Member ${memberId} had ${deletedSubscription._id} subscriptions`);
+        }
+
+
+        return { success: true, message: 'Member was deletes' }
     } catch (err) {
-        console.error('Error deleting member: ', err);
-        throw new Error("Internal Server Error")
+        if (err instanceof AppError) {
+            throw err
+        } else {
+            console.error('Error deleting member: ', err);
+            throw new Error("Internal Server Error")
+
+        }
     }
 }
 

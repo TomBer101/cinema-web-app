@@ -45,7 +45,7 @@ const updateMember = async (req, res) => {
 }
 
 const deleteMember = async (req, res) => {
-    const {memberId} = req.params
+    const {memberId} = req.query
 
     try {
         const result = await membersService.deleteMember(memberId)

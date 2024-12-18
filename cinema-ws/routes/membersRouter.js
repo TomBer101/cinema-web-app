@@ -9,6 +9,6 @@ const router = express.Router()
 router.get('/', authMiddleware.checkPermissions('View Subscriptions'), membersController.getAllMembers)
 router.patch('/:memberId', membersController.updateMember)
 router.post('/', membersController.addMember)
-router.delete('/:memberId', membersController.deleteMember)
+router.delete('/', membersController.deleteMember)
 
 module.exports = router
