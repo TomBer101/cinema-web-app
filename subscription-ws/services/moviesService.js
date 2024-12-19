@@ -62,7 +62,7 @@ const getAllMovies = async (page, limit) => { // TODO: add watchers data
             // Step 7: Group back by movie ID, accumulating watcher data in `members`
             {
                 $group: {
-                    _id: '$_id',
+                   _id: '$_id',
                     name: { $first: '$name' },
                     genres: { $first: '$genres' },
                     image: { $first: '$image' },

@@ -4,9 +4,11 @@ import Typography from '@mui/material/Typography';
 import { List } from '@mui/material';
 
 import { useDeleteMember } from '../../hooks/useMembersMutations';
+import { useNavigate } from 'react-router-dom';
 
 const SubscriptionItem = ({id, name, email, city, movies}) => {
     const {mutate: deleteMember} = useDeleteMember()
+    const navigate = useNavigate()
 
     const handleDelete = (event) => {
         event.preventDefault()
@@ -14,7 +16,11 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
     }
 
     const handleEditOnClick = () => {
+        const state = {
+            id, name, email, city,
+        }
 
+        navigate('edit', {state : state})
     }
 
     return (

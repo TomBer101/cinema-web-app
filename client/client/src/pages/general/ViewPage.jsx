@@ -19,14 +19,14 @@ const ViewPage = () => {
     const { ref, inView } = useInView()
     const observer = useRef(null)
 
-    const fetchDataByType = async ({pageParam }) => {
+    const fetchDataByType = async ({pageParam}) => {
         switch (type) {
             case 'movies': 
                 return await fetchMovies(pageParam , searchTerm)
             case 'users':
-                return await fetchUsers(page)
+                return await fetchUsers(pageParam)
             case 'subscriptions': 
-                return await fetchSubscriptions(page)
+                return await fetchSubscriptions(pageParam)
             default:
                 throw new Error(`Unknown type: ${type}`)
         }

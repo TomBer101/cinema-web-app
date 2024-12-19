@@ -18,8 +18,18 @@ export function useUpdateMutation(mutationFn, queryKey) {
             await queryClient.cancelQueries(queryKey, {exact: false})
             const prevData = queryClient.getQueryData(queryKey, {exact: false})
 
-            queryClient.setQueriesData({queryKey, exact: false}, (old) => 
-                old? old.map(item => item.id === updatedItem.id? {...item, ...updatedItem} : item) : []
+            const updatedPages = prevData?.pages.map ( page => {
+                const itemIndex = page.findIndex(item => item.id === updatedItem.id)
+                if (itemIndex !== -1) {
+                    return [...page.slice(0, itemIndex), ...page.slice(itemIndex + 1)]
+                }
+
+                return page
+            });
+
+            queryClient.setQueriesData({queryKey, exact: false}, 
+                {...prevData,
+                pages: updatedPages}
             );
             return {prevData}
         },
@@ -40,7 +50,8 @@ export function useGenericDelete(mutationFn, queryKey) {
         onMutate: async (id) => {
             await queryClient.cancelQueries(queryKey, {exact: false});
 
-            const previousData = queryClient.getQueryData(queryKey, {exact: false});
+            const previousData = queryClient?.getQueryData(queryKey, {exact: false});
+            
             const updatedPages = previousData.pages.map(page => {
                 const itemIndex = page.findIndex(item => item.id === id)
 
