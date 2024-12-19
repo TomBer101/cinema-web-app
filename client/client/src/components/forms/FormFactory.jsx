@@ -1,6 +1,7 @@
 import Card from '@mui/material/Card'
 import UserForm from './UserForm'
 import MovieForm from './MovieForm';
+import MemberForm from './MemberForm';
 
 
 const FormFactory = ({type, props}) => {
@@ -13,6 +14,9 @@ const FormFactory = ({type, props}) => {
         case 'movies':
             formComponent = <MovieForm {...props} />
             break;
+        case 'subscriptions':
+            formComponent = <MemberForm {...props}/>
+            break
         default:
             formComponent = <p>{`Type ${type} is Unknown`}</p>
     }

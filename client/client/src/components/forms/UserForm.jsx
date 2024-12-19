@@ -48,9 +48,7 @@ const UserForm = (props) => {
                 { queryKey: ['fetchData', 'users'], exact: false },
                 (oldData) => {
                     if (!oldData || oldData.length === 0) return [newUser]; // Initialize with the new user if no data exists
-                    
-                    // Add the user to the beginning of the first page only
-                    
+                                        
                     return [newUser, ...oldData]
                 }
             );
