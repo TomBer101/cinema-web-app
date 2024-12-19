@@ -84,6 +84,28 @@ const getAllMembers = async (page, limit) => {
     }
 }
 
+const deleteSubscription = async (memberId) => {
+    try {
+        const deletedSubscription = await Subscription.deleteOne({ memberId: memberId });
+
+
+        if (!deletedSubscription) {
+            console.log(`No subscriptions for member with id: ${memberId}`);
+        }
+
+        return {
+            success: true,
+            message: `Member's ${memberId} subscriptions was deleted`
+        };
+    } catch (err) {
+        console.error('Error deleting subscription');
+        if (err instanceof AppError) { throw err }
+        else { throw new AppError('Internal Server Error', 500) }
+        
+    }
+}
+
 module.exports = {
-    addOrUpdatesubscription
+    addOrUpdatesubscription,
+    deleteSubscription
 }

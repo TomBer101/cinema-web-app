@@ -22,9 +22,22 @@ const getAllSubscriptions = async (req, res) => {
     res.redirect('/api/members')
 }
 
+const deleteSubscription = async (req, res) => {
+    const {memberId} = req.params
+
+    try {
+        const deletedSubscription = await subscriptionService.deleteSubcriptionByMemeberId(memberId)
+        res.status(deletedSubscription.status).json({message: deletedSubscription.message})
+    } catch (err) {
+        console.error('Error deleting subscription: ', err);
+        res.status(200).json({message: 'Couldnt delete member data'})        
+    }
+}
+
 
 
 module.exports = {
     addSubscription,
-    getAllSubscriptions
+    getAllSubscriptions,
+    deleteSubscription
 }

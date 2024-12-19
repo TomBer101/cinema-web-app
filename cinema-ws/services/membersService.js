@@ -1,5 +1,5 @@
 const dataUtils = require('../utils/wsUtils')
-const AppError = require('../classes/appErrors')
+const {AppError} = require('../classes/appErrors')
 
 let membersCache = []
 let cachPage = 0
@@ -30,11 +30,18 @@ const getAllMembers = async (pageNumber) => {
 }
 
 const addMember = async (memberInfo) => {
+    const existedMember = membersCache.find(member => member.email === memberInfo.email)
+
+    if (existedMember) {
+        throw new AppError('Member already exists', 400)
+    }
+
     try {
         const res = await dataUtils.postData('members', memberInfo)
         return res
     } catch (err) {
         console.error('Error post member: ', err);
+        
         throw err
     }
 }
@@ -58,7 +65,7 @@ const deleteMember = async (memberId) => {
         return res
     } catch (err) {
         console.error(`Error deleting member: `, err);
-        throw new AppError.AppError('Internal server error', 500)
+        throw new AppError('Internal server error', 500)
     }
 }
 

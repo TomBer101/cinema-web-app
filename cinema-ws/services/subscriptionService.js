@@ -15,6 +15,20 @@ const updateSubscription = async (subscriptionId, addedMovie) => {
     
 }
 
+const deleteSubcriptionByMemeberId = async (memberId) => {
+    try {
+        const res = await dataUtils.deleteData('subscriptions', memberId)
+        return {
+            status: 200,
+            message: 'Memeber data was deleted'
+        }
+    } catch (err) {
+        console.error('Error deleting subscription: ', err);
+        throw err
+    }
+}
+
 module.exports = {
-    addNewSubscription
+    addNewSubscription,
+    deleteSubcriptionByMemeberId
 }

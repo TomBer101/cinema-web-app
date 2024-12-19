@@ -117,9 +117,9 @@ const updateMember = async (memberId, updatedData) => {
             throw new AppError(`Member ${memberId} was not found`, 400)
         }
 
-        if (updatedData.email) {
-            const isEmailInUse = await Member.findOne({ email })
-            if (isEmailInUse) {
+        if (updatedData.email && updatedData.email !== existedMember.email) {
+            const member = await Member.findOne({ email: updatedData.email })
+            if (member) {
                 throw new AppError(`The email ${email} is in use`, 404)
             }    
         }

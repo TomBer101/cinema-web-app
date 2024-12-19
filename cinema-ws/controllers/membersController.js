@@ -18,7 +18,11 @@ const addMember = async (req, res) => {
         res.status(result.status).json(result.data)
     } catch (err) {
         console.error('Error adding member: ', err);
-        res.status(err.status).json({message: res.message})        
+
+        const statusCode = err.statusCode || 500
+        const message = err.message || 'Internal Server Error'
+
+        res.status(statusCode).json({message})        
     }
 }
 
@@ -26,7 +30,7 @@ const updateMember = async (req, res) => {
     const {memberId} = req.params
 
     try {
-        const {data} = req.body
+        const data = req.body
         const result = await membersService.updateMember(memberId, data);
         
         if (result.status === 200) {

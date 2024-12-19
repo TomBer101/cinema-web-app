@@ -41,7 +41,7 @@ const updateMember = async (req, res) => {
         }
     } catch (err) {
         console.error('Error updaing member: ', err);
-        res.status(err.status).json({message: err.message})
+        res.status(err.statusCode).json({message: err.message})
     }
 }
 
