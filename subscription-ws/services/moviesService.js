@@ -169,10 +169,10 @@ const deleteMovie = async (movieId) => {
     }
 }
 
-const getMoviesName = async () => {
+const getMoviesProjection = async (projection, skip = 0) => {
     try {
-        const moviesNames = await Movie.find({}).projection({name: 1});
-        return moviesNames;
+        const projectedMovies = await Movie.find({}, projection, {skip});
+        return projectedMovies;
     } catch (err) {
         console.error('Error getting movies names');
         throw new AppError('Internal Server Error', 500);
@@ -184,5 +184,5 @@ module.exports = {
     addMovie,
     updateMovie,
     deleteMovie,
-    getMoviesName
+    getMoviesProjection
 }

@@ -15,28 +15,55 @@ const MOVIES_PER_FETCH = 300;
 // requestedIndex = 350
 
 
-const getAllMovies = async (pageNumber) => {
+const getAllMovies = async (pageNumber, feilds) => {
     const requestedIndex = (pageNumber - 1) * MOVIES_PER_PAGE
 
-    if (requestedIndex >= movieCache.length) { // index too high - out of range -> fetch more data
-        try {
-            const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
-            const {movies} = await dataUtils.getData('movies', 300, requestedPage)
+    try {
 
-            const transformedMovies = movies.map(({_id, ...rest}) => ({
-                ...rest,
-                id: _id,
-            }))
-            movieCache = [...movieCache, ...transformedMovies]
-        } catch (err) {
+        if (feilds) {
+            let moviesProjection = await getMoviesFeilds(feilds, requestedIndex)
+            moviesProjection = moviesProjection.map(({_id, ...rest}) => ({...rest, id: _id}))
+
+            return moviesProjection
+        } else {
+            if (requestedIndex >= movieCache.length) {
+                const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
+                const { movies } = await dataUtils.getData('movies', 300, requestedPage)
+
+                const transformedMovies = movies.map(({ _id, ...rest }) => ({
+                    ...rest,
+                    id: _id,
+                }))
+                movieCache = [...movieCache, ...transformedMovies]
+            }
+
+            const slice = movieCache.slice(requestedIndex, requestedIndex + MOVIES_PER_PAGE)
+            return slice
+
+        }
+
+    } catch (err) {
             console.error('Error fetching movies');
             throw new AppError.AppError('Error fetching movies', 500)
         }
-    } 
-    const slice = movieCache.slice(requestedIndex, requestedIndex + MOVIES_PER_PAGE)
 
-    return slice
 
+}
+
+const getMoviesFeilds = async (feilds) => {
+    //const cachedNames = movieCache.map(movie => movie.name)
+
+    try {
+        const skip = Math.floor(movieCache.length / MOVIES_PER_FETCH)
+        let { movies: fetchedMovies } = await dataUtils.getData('movies',300, 0, feilds)
+
+        //fetchedMovies = fetchedMovies.map(movie => movie.name)
+        //const combined = Array.from(new Set([...cachedNames, ...fetchedMovies]))
+        return fetchedMovies
+    } catch (err) {
+        console.error('Error get by feilds: ', err)
+        throw err
+    }
 }
 
 const addMovie = async (movieInfo) => {

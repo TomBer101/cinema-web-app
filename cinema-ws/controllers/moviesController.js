@@ -6,7 +6,8 @@ const moviesService = require('../services/moviesServices')
 const getAllMovies = async (req, res) => {
     try {
         const page = req.query.page || 1
-        const movies = await moviesService.getAllMovies(page)
+        const {fields} = req.query || undefined
+        const movies = await moviesService.getAllMovies(page, fields)
 
         res.status(200).json({movies})
     } catch (err) {

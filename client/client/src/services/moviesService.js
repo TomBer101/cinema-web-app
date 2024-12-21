@@ -74,3 +74,8 @@ export const updateMovie = async (movieId, updatedInfo) => {
 export const deleteMovie = async (movieId) => {
     const response = await deleteData('/movies', {params: {movieId}})
 }
+
+export const getMoviesName = async (page, query) => {
+    const {movies} = await fetchData('/movies', page, query)
+    return movies
+}

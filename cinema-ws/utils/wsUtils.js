@@ -3,12 +3,13 @@ const { AppError } = require('../classes/appErrors')
 
 const BASE_URL = 'http://localhost:8000/api/'
 
-const getData = async (route, limit = undefined, page = undefined) => {
+const getData = async (route, limit = undefined, page = undefined, projection = undefined) => {
     try {
         const {data} = await axios.get(BASE_URL + route, {
             params: {
                 limit: limit,
-                page
+                page,
+                feilds: projection
             }
         })
 

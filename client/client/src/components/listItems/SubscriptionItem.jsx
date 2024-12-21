@@ -5,6 +5,7 @@ import { List } from '@mui/material';
 
 import { useDeleteMember } from '../../hooks/useMembersMutations';
 import { useNavigate } from 'react-router-dom';
+import AddMovieForm from '../forms/AddMovieForm';
 
 const SubscriptionItem = ({id, name, email, city, movies}) => {
     const {mutate: deleteMember} = useDeleteMember()
@@ -39,6 +40,7 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
             </div>
 
             <Typography variant='h4'>Movies Watched</Typography>
+            <AddMovieForm memberId={id}/>
             <List sx={{maxHeight: '8rem', overflowY: 'auto'}}>
                 {
                     movies?.map((movie, index) => {
