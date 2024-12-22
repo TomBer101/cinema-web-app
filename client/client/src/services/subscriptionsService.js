@@ -1,4 +1,4 @@
-import { fetchData } from "../utils/dataUtils"
+import { fetchData, postData } from "../utils/dataUtils"
 
 export const fetchSubscriptions = async (page) => {
     try {
@@ -9,6 +9,20 @@ export const fetchSubscriptions = async (page) => {
         if (err.status === 401) {
             throw new Error('Unauthorized! Please login again.')
         } else {
+            throw new Error('Unknown Error!')
+        }
+    }
+}
+
+export const addSubscription = async (newSubscription) => {
+    try {
+        const {data: subscription} = await postData(`subscriptions/${newSubscription.memberId}`, newSubscription.subscription)
+        return subscription
+    } catch (err) {
+        if (err.status === 401) {
+            throw new Error('Unauthorized! Please login again.')
+        } else {
+            console.log('Error add subscription: ', err);
             throw new Error('Unknown Error!')
         }
     }

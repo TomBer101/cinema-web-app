@@ -1,20 +1,20 @@
 const subscriptionService = require('../services/subscriptionService')
 
 const addSubscription = async (req, res) => {
-    const memeberId = req.params
-    const subscriptionData = req.body
+    const {memberId} = req.params
+    let subscriptionData = req.body
 
-    const data = {
-        memeberId,
+    subscriptionData = {
+        memberId,
         ...subscriptionData
     }
 
     try {
-        const result = await subscriptionService.addNewSubscription(data)
-        res.status(result.status).json({message: res.message})
+        const result = await subscriptionService.addNewSubscription(subscriptionData)
+        res.status(result.status).json({...result.data, id: result.data._id})
     } catch (err) {
         console.error('Error adding subscription: ', err);
-        res.status(err.status).json({message: res.message})
+        res.status(err.status).json(data)
     }
 }
 

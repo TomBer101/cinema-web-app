@@ -20,7 +20,7 @@ const deleteSubscription = async (req, res) => {
 
 const createSubscriptions = async (req, res) => {
     const {memberId} = req.params
-    const {movieId, date} = req.body
+    const {id: movieId, date} = req.body
 
     try {
         const subscription = await subscriptionService.addOrUpdatesubscription(memberId, movieId, date)

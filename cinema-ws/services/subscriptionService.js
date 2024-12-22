@@ -3,7 +3,7 @@ const AppError = require('../classes/appErrors')
 
 const addNewSubscription = async (subscriptionData) => {
     try {
-        const res = await dataUtils.postData('subscription', subscriptionData)
+        const res = await dataUtils.postData(`subscriptions/${subscriptionData.memberId}`, subscriptionData)
         return res
     } catch (err) {
         console.error("Error post subscription");
