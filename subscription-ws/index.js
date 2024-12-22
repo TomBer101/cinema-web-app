@@ -4,6 +4,7 @@ const configDB = require('./mongoDB/config')
 
 const moviesRoute = require('./routes/moviesRouter')
 const membersRouter = require('./routes/membersRouter')
+const subscriptionsRouter = require('./routes/subscriptionsRouter')
 
 const PORT = 8000;
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json())
 
 app.use('/api/movies', moviesRoute)
 app.use('/api/members', membersRouter)
+app.use('/api/subscriptions', subscriptionsRouter)
 
 
 app.use('/test', (req, res) => {

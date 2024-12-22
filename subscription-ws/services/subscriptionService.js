@@ -2,32 +2,37 @@ const Subscription = require('../models/subscriptionModel')
 const AppError = require('../classes/appError')
 const Member = require('../models/memberModel')
 
-const addOrUpdatesubscription = async ({memberId, movieId, date}) => {
+const addOrUpdatesubscription = async (memberId, movieId, date) => {
     try {
-        let userSubscriptions = await Subscription.findOne({memberId})
+        const member = await Member.findById(memberId)
+        if (!member) {
+            throw new AppError('Member not found', 404)
+        }
 
-        if (userSubscriptions) {
-            userSubscriptions.movies.push({
+        let memberSubscriptions = await Subscription.findOne({memberId})
+
+        if (memberSubscriptions) {
+            memberSubscriptions.movies.push({
                 movieId,
-                date: new Date()
+                date: Date.parse(date)
             })
 
-            await userSubscriptions.save()
+            await memberSubscriptions.save()
         } else {
-            userSubscriptions = new Subscription({
+            memberSubscriptions = new Subscription({
                 memberId,
                 movies: [
                     {
                         movieId,
-                        date: new Date()
+                        date: date
                     }
                 ]
             });
 
-            await userSubscriptions.save()
+            await memberSubscriptions.save()
         }
 
-        return userSubscriptions
+        return memberSubscriptions
     } catch (err) {
         console.error("Error adding subscription: ", err);
         throw err

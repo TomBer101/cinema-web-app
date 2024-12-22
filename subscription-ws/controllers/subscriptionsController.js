@@ -1,7 +1,7 @@
 const subscriptionService = require('../services/subscriptionService')
 
 
-const deleteSubscription = async (res, res) => {
+const deleteSubscription = async (req, res) => {
     const {memberId} = req.params
 
     try {
@@ -18,6 +18,20 @@ const deleteSubscription = async (res, res) => {
     }
 }
 
+const createSubscriptions = async (req, res) => {
+    const {memberId} = req.params
+    const {movieId, date} = req.body
+
+    try {
+        const subscription = await subscriptionService.addOrUpdatesubscription(memberId, movieId, date)
+        res.status(200).json(subscription)
+    } catch (err) {
+        console.error(err);
+        res.status(err.status).json({ message: err.message });        
+    }
+}
+
 module.exports = { 
-    deleteSubscription
+    deleteSubscription,
+    createSubscriptions
 }
