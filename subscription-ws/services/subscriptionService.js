@@ -1,6 +1,7 @@
 const Subscription = require('../models/subscriptionModel')
 const AppError = require('../classes/appError')
 const Member = require('../models/memberModel')
+const Movie = require('../models/movieModel')
 
 const addOrUpdatesubscription = async (memberId, movieId, date) => {
     try {
@@ -32,7 +33,8 @@ const addOrUpdatesubscription = async (memberId, movieId, date) => {
             await memberSubscriptions.save()
         }
 
-        return memberSubscriptions
+        const movie = await Movie.findById(movieId)
+        return {movieId, date, memberId, movieName: movie.name}
     } catch (err) {
         console.error("Error adding subscription: ", err);
         throw err

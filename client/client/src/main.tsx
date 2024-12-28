@@ -15,6 +15,8 @@ import ViewPage from './pages/general/ViewPage.jsx'
 import AddPage from './pages/general/AddPage.jsx'
 import EditPage from './pages/general/EditPage.jsx'
 
+import queryClient from './configs/reactQuery.js'
+
 const ErrorPage = () => {
   return(
     <h1>Ooopppssss</h1>
@@ -23,13 +25,13 @@ const ErrorPage = () => {
 
 // import {router} from './routes/router.js'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false
-    }
-  }
-})
+// const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       refetchOnWindowFocus: false
+//     }
+//   }
+// })
 
 const router = createBrowserRouter([
   {
@@ -74,27 +76,6 @@ const router = createBrowserRouter([
       }
     ]
   },
-  // {
-  //     element: <MoviesLayout />,
-  //     path: 'movies',
-  //     children: [
-  //         {
-  //             element: 
-  //             <ProtectedRoute dataType={'Movies'} functionality={'Create'}>
-  //               <AddMoviePage />
-  //             </ProtectedRoute> ,
-  //             path: 'add'
-  //         },
-  //         {
-  //             element: <EditMoviePage />,
-  //             path: 'edit/:movieId'
-  //         },
-  //         {
-  //             element: <MoviesPage />,
-  //             index: true
-  //         }
-  //     ]
-  // },
   {
     path: 'error',
     element: <ErrorPage />
