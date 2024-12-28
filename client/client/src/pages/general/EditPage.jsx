@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import FormFactory from '../../components/forms/FormFactory';
 
 
-const EditPage = () => {
+const EditPage = () => { 
     const {type} = useParams()
     const location = useLocation()
 

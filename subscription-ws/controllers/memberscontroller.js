@@ -6,13 +6,24 @@ const getAllMembers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 300
 
     try {
+            
         const members = await membersService.getAllMembers(page, limit)
         res.status(200).json({members})
     } catch (err) {
         console.error('Error get all member: ', err);
-        res.status(err.status).json({message: err.message})
+        res.status(err.statusCode || err.status).json({message: err.message})
     }
 
+}
+
+const getMember = async (req, res)=> {
+    try {
+        const {memberId} = req.params 
+        const member = await membersService.getMember(memberId)
+        res.status(200).json({member})
+    } catch (err) {
+        throw err
+    }
 }
 
 const addMember = async (req, res) => {
@@ -66,5 +77,6 @@ module.exports = {
     getAllMembers,
     addMember,
     updateMember,
-    deleteMember
+    deleteMember,
+    getMember
 }

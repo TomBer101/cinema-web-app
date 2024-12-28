@@ -168,8 +168,23 @@ const deleteMember = async (memberId) => {
     }
 }
 
+const getMember = async (memberId) => {
+    try {
+        const member = Member.findById(memberId)
+
+        if (!member) {
+            throw new AppError(`Member ${memberId} was not found.`, 401)
+        }
+
+        else return member;
+    } catch (err) {
+        throw err
+    }
+}
+
 module.exports = {
     getAllMembers,
     addMember, updateMember,
-    deleteMember
+    deleteMember,
+    getMember
 }

@@ -14,10 +14,14 @@ const getAllMembers = async (pageNumber) => {
             const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
             const {members} = await dataUtils.getData('members', 300, requestedPage)
 
-            const transformedMembers = members.map(({_id, ...rest}) => ({
+            const transformedMembers = members.map(({_id, movies, ...rest}) => {
+                const trnasformedMovies = movies.map(movie => ({...movie, id: movie._id || movie.id}))
+                return ({
                 ...rest,
+                movies: trnasformedMovies,
                 id: _id,
-            }))
+                })
+            })
             membersCache = [...membersCache, ...transformedMembers]
         } catch (err) {
             console.error('Error fetching members: ', err);
@@ -69,9 +73,35 @@ const deleteMember = async (memberId) => {
     }
 }
 
+const getMember = async (memberId) => {
+    let member = membersCache.find(member => member.id === memberId)
+    if (member) {
+        return member
+    } else {
+        try {
+            const res = await dataUtils.getData('members', memberId)
+            return res
+        } catch (err) {
+            console.error('Error getting member: ', err)
+            throw new AppError('Internal server error', 500)
+        }
+    }
+}
+
+const invalidateCache = (subscription) => {
+    for (let i = 0; i < membersCache.length; i++) {
+        if (membersCache[i].id === subscription.memberId) {
+            membersCache[i].movies = [...membersCache[i].movies, {id: subscription.movieId, watchDate: subscription.date, name: subscription.movieName}] //? [...membersCache[i].movies] : [membersCache[i].movies].push({name: subscription.movieName, watchDate: subscription.watchDate, _id: subscription._id})
+            break
+        }
+    }
+}
+
 module.exports = {
     getAllMembers,
     addMember,
     updateMember,
-    deleteMember
+    deleteMember,
+    getMember,
+    invalidateCache
 }

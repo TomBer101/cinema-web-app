@@ -3,11 +3,24 @@ const membersService = require('../services/membersService')
 const getAllMembers = async (req, res) => {
     try {
         const page = req.params.page || 1
-        const members = await membersService.getAllMembers(page)
-    
+
+        
+            const members = await membersService.getAllMembers(page)
         res.status(200).json({members})
+        
+        
     } catch (err) {
         res.status(500).json({err})
+    }
+}
+
+const getMember = async (req, res) => {
+    try {
+        const {memberId} = req.params 
+        const member = await membersService.getMember(memberId)
+        res.status(200).json({member})
+    } catch (err) {
+        throw err
     }
 }
 
@@ -66,5 +79,5 @@ module.exports = {
     getAllMembers,
     addMember,
     deleteMember,
-    updateMember
+    updateMember,getMember
 }
