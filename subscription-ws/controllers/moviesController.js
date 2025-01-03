@@ -12,8 +12,8 @@ const getAllMovies = async (req, res) => {
             const movies = await moviesService.getMoviesProjection(projection, skip)
             res.status(200).json({movies})
         } else {
-            const movies = await moviesService.getAllMovies(page, limit)
-        res.status(200).json({movies})
+            const result = await moviesService.getAllMovies(page, limit)
+            res.status(200).json(result)
         }
         
     } catch (err) {
@@ -61,6 +61,17 @@ const deleteMovie = async (req, res) => {
         res.status(200).json(result)
     } catch (err) {
         res.status(500).json({message: 'Error deleting movie ' + movieId})
+    }
+}
+
+const getMovieById = async (req, res) => {
+    const {movieId} = req.params
+
+    try {
+        const result = await moviesService.getMovieById(movieId)
+        res.status(200).json(result)
+    } catch (err) {
+        res.status(err.status || res.statusCode).json({message: err.message})
     }
 }
 

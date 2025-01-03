@@ -1,18 +1,13 @@
 const dataUtils = require('../utils/wsUtils')
 const AppError = require('../classes/appErrors')
 
-let movieCache = [];
-let cachePage = 0; // Track the current page of cached movies
+
 const MOVIES_PER_PAGE = 50;
 const MOVIES_PER_FETCH = 300;
 
-// cache = [300]
-//page = 2
-// requestedIndex = 50 
-
-// cache = [300]
-// page = 8
-// requestedIndex = 350
+let movieCache = [];
+let cachePage = 0; 
+let totalCount = 0;
 
 
 const getAllMovies = async (pageNumber, feilds) => {
@@ -22,24 +17,37 @@ const getAllMovies = async (pageNumber, feilds) => {
 
         if (feilds) {
             let moviesProjection = await getMoviesFeilds(feilds, requestedIndex)
-            moviesProjection = moviesProjection.map(({_id, ...rest}) => ({...rest, id: _id}))
+            moviesProjection = moviesProjection.map(({_id, members, ...rest}) => {
 
-            return moviesProjection
+                return ({...rest, id: _id})
+            })
+
+            return {moviesProjection, hasMore: false}
         } else {
             if (requestedIndex >= movieCache.length) {
                 const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
-                const { movies } = await dataUtils.getData('movies', 300, requestedPage)
+                const { movies, totalCount } = await dataUtils.getData('movies', 300, requestedPage)
 
-                const transformedMovies = movies.map(({ _id, ...rest }) => ({
+                const transformedMovies = movies.map(({ _id, members, ...rest }) => {
+                const transformedMembers = members.map(({_id, restMem}) => ({id: _id, ...restMem}))
+
+                    return ({
                     ...rest,
+                    members: transformedMembers,
                     id: _id,
-                }))
+                    })
+            }
+            )
                 movieCache = [...movieCache, ...transformedMovies]
+                cachePage = requestedPage
             }
 
             const slice = movieCache.slice(requestedIndex, requestedIndex + MOVIES_PER_PAGE)
-            return slice
+            const hasMore = movieCache.length > requestedIndex + MOVIES_PER_PAGE ||
+                (cachePage * MOVIES_PER_FETCH < totalCount); // Check if there's potentially more data in Server B
 
+            
+            return {slice, hasMore}
         }
 
     } catch (err) {
@@ -100,11 +108,24 @@ const deleteMovie = async (movieId) => {
     }
 }
 
+const getMovieById = async (movieId) => {
+    let movie = movieCache.find(movie => movie.id === movieId)
+    if (movie) return movie
 
+    try {
+        movie = await dataUtils.getData('movies', movieId)
+        return movie
+    } catch (err) {
+        console.error('Error Get Movie By ID: ', err);
+        throw new AppError('Internal App Server', 500)
+    }
+
+}
 
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    getMovieById
 }

@@ -6,7 +6,9 @@ export const fetchMovies = async (page) => {
     return movies
     } catch (err) {
         console.error('Error fetching movies: ', err);
-        return [
+        return {
+            hasMore: false,
+            data:[
             {
                 "_id" : "66e583f7d43006e1685edf39",
                 "name" : "Arrow1",
@@ -52,7 +54,7 @@ export const fetchMovies = async (page) => {
                 "image" : "https://static.tvmaze.com/uploads/images/medium_portrait/143/358967.jpg",
                 "premiered" : ("2012-10-10")
             }
-        ]
+        ]}
     }
     
 };
@@ -78,4 +80,9 @@ export const deleteMovie = async (movieId) => {
 export const getMoviesName = async (page, query) => {
     const {movies} = await fetchData('/movies', page, query)
     return movies
+}
+
+export const getMovieById = async (movieId) => {
+    const {movie} = await fetchData(`/movies/${movieId}`)
+    return movie
 }

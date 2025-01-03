@@ -62,9 +62,21 @@ const deleteMovie = async (req, res) => {
     }
 }
 
+const getMovie = async (req, res) => {
+    const {movieId} = req.params
+
+    try {
+        const movie = await moviesService.getMovieById(movieId)
+        res.status(200).json({movie})
+    } catch (err) {
+        res.status(500).json({err})
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    getMovie
 }
