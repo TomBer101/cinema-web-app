@@ -47,7 +47,7 @@ const getAllMovies = async (pageNumber, feilds) => {
                 (cachePage * MOVIES_PER_FETCH < totalCount); // Check if there's potentially more data in Server B
 
             
-            return {slice, hasMore}
+            return {data: slice, hasMore}
         }
 
     } catch (err) {

@@ -1,9 +1,9 @@
 import { ListItem, List, Typography, TextField, Box } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 
-import { fetchMovies } from '../../services/moviesService';
+import { fetchMovies, getMovieById } from '../../services/moviesService';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { fetchUsers } from '../../services/usersService';
 import ItemFactory from '../../components/listItems/ItemFactory';
@@ -16,17 +16,30 @@ const ViewPage = () => {
     const {type} = useParams()
     const [searchTerm, setSearchTerm] = useState('')
     const queryClient = useQueryClient()
+    const location = useLocation()
     const { ref, inView } = useInView()
     const observer = useRef(null)
+    const itemId = location.state?.id
+
 
     const fetchDataByType = async ({pageParam}) => {
         switch (type) {
             case 'movies': 
-                return await fetchMovies(pageParam , searchTerm)
+                const res = await fetchMovies(pageParam , searchTerm)
+                return res
             case 'users':
                 return await fetchUsers(pageParam)
             case 'subscriptions': 
                 return await fetchSubscriptions(pageParam)
+            default:
+                throw new Error(`Unknown type: ${type}`)
+        }
+    }
+
+    const fetchById = async (id) => {
+        switch (type) {
+            case 'movies':
+                return await getMovieById(id)
             default:
                 throw new Error(`Unknown type: ${type}`)
         }
@@ -41,23 +54,29 @@ const ViewPage = () => {
         queryFn: fetchDataByType,
         initialPageParam: 1,
         getNextPageParam: (lastPage, pages) => {
-            const nextPage = lastPage.length? pages.length + 1 : undefined;
+            const nextPage = lastPage.hasMore? pages.length + 1 : undefined;
             return nextPage
         },
     })
 
-    // const content = data?.pages.map((items) => {
-    //     items.map((item, index) => {
-    //         if (items.length === index + 1) {
-    //             return (<ListItem ref={ref} key={index}>
-    //                 <ItemFactory props={item} type={type}/>
-    //             </ListItem>)
-    //         }
-    //         return (<ListItem key={index}>
-    //         <ItemFactory props={item} type={type}/>
-    //     </ListItem>)
-    //     })
-    // })
+    const {data: specificItem, isLoading: isLoadingItem} = useQuery(
+        ['fetchById', type, itemId],
+        () => fetchById(itemId),
+        {
+            enabled: !!itemId && !queryClient
+            .getQueryData(['fetchData', type])
+            ?.pages.flatMap((page) => page)
+            .find((item) => item.id === itemId),
+            cacheTime: 0,
+            staleTime: 0
+        }
+    )
+
+    const {data: searchResult, refetch: searchMovie} = useQuery({
+        queryKey: ['search', type],
+        queryFn: ({meta}) => fetchDataByType(meta.searchTerm),
+        enabled: !!searchTerm
+    });
 
     useEffect(() => {
         if (inView && hasNextPage) {
@@ -65,14 +84,6 @@ const ViewPage = () => {
           fetchNextPage();
         }
     }, [inView, hasNextPage, fetchNextPage]);
-    const items = data? data.pages.flatMap(page => page) : []
-   
-
-    const {data: searchResult, refetch: searchMovie} = useQuery({
-        queryKey: ['search', type],
-        queryFn: ({meta}) => fetchDataByType(meta.searchTerm),
-        enabled: !!searchTerm
-    });
 
     const handleSearch = async (searchTerm) => {
         if (type !== 'movies' || !searchTerm.trim()) return;
@@ -98,6 +109,32 @@ const ViewPage = () => {
         ]);
     }
 
+    const items = useMemo(() => {
+        if (itemId) {
+            return specificItem? [specificItem] : []
+        }
+
+        const res = data?.pages.flatMap(page => page.data) || []
+        return res
+    }, [data, specificItem, itemId])
+
+
+    // let items = []
+    // const cachedData = data? data.pages.flatMap(page => page) : []
+
+    // if (location.state?.id) {
+    //     items = cachedData.filter(item => item.id === location.state.id)
+
+    //     if (items?.length === 0) {
+    //         const fetchItem = async (id) => {
+                
+    //         }
+    //     }
+    // } else {
+    //     items = data?.pages.flatMap(page => page)
+    // }
+   
+
     if (isLoading) return <p>Loading...</p>
     if (error) return <p>Error : {error.message}</p>
 
@@ -108,7 +145,9 @@ const ViewPage = () => {
             <Box sx={{display: !searchResult? 'none' : 'block'}}>
                 {<ItemFactory type={type} props={searchResult} />}
             </Box>
-            <List>
+            <List sx={{
+                width: '55%'
+            }}>
                 {
                    
                         items?.map((item, index) => {
