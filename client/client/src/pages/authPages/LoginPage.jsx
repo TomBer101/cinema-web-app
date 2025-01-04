@@ -7,8 +7,11 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal';
+import LockIcon from '@mui/icons-material/Lock';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 
 import { useAuth } from '../../contetxt/AuthContext'
+import styles from '../../styles/form.module.css'
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -45,41 +48,61 @@ const LoginPage = () => {
             padding: '2rem'
         }}>
             <Box>
-                <Typography variant='h1' fontSize='3.7rem' fontWeight='500'>Movies Subscription Web Site</Typography>
+                <Typography variant='h1' fontSize='3.7rem' fontWeight='500' fontFamily='cursive'>Movies Subscription Web Site</Typography>
                 <Box 
                     component='form' 
                     onSubmit={handleSubmit(onSubmit)}
                     sx={{
                         justifyContent: 'center',
+                        backgroundColor: '#E9E5D6',
                         justifyItems: 'center',
                         minHeight: '40vh',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '5vh',
                         width: 'fit-content',
-                        m: 'auto',
-                        p: '0 2rem'
+                        m: ' 5rem auto',
+                        p: '2rem',
+                        borderRadius: '25px',
+                        transition: '.4s ease-in-out',
+                        '&:hover': {
+                            transform: 'scale(1.05)',
+                            border: '1px solid black'
+                        }
                     }}
                 >
-                    <div>
-                        <label htmlFor='username'>Username:</label>
+                    <div className={styles.field}>
+                        <AlternateEmailIcon className={styles.inputIcon} />
+                        {/* <label htmlFor='username'>Username:</label> */}
                         <input
                             id='username'
+                            autoCapitalize='off'
+                            className={styles.inputField}
+                            placeholder='Username'
                             {...register('username', { required: 'Username is requierd' })}
                         />
                         {errors.username && <p>{errors.username.message}</p>}
                     </div>
-                    <div>
-                        <label htmlFor='password'>Password:</label>
+
+                    <div className={styles.field}>
+                        <LockIcon className={styles.inputIcon} />
+
+                        {/* <label htmlFor='password'>Password:</label> */}
                         <input
+                        className={styles.inputField}
                             type="password"
                             id="password"
+                            placeholder='Password'
                             {...register('password', { required: 'Password is required' })}
                         />
                         {errors.password && <p>{errors.password.message}</p>}
                     </div>
-                    <Button type='submit'>Login</Button>
-                </Box>
+                    <div className={`${styles.btns} ${styles.horizontal}`}>
+<Button type='submit'>Login</Button>
+                    <Button onClick={() => navigate('/register')}>Register</Button>
+                
+                    </div>
+                    </Box>
                 <Modal
                     open={isModalOpen}
                     onClose={handleCloseModal}
