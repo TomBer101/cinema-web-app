@@ -37,7 +37,7 @@ const AddMovieForm = ({memberId, movies}) => {
                     ...oldData,
                     pages: oldData.pages.map((page) => ({
                         ...page,
-                        data: page.map(member => {
+                        data: page.data.map(member => {
                             if (member.id === newSubscription.memberId) {
                                 return {
                                     ...member,

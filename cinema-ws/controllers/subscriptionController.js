@@ -1,5 +1,6 @@
 const subscriptionService = require('../services/subscriptionService')
 const membersService = require('../services/membersService')
+const moviesService = require('../services/moviesServices')
 
 const addSubscription = async (req, res) => {
     const {memberId} = req.params
@@ -13,6 +14,7 @@ const addSubscription = async (req, res) => {
     try {
         const {data: subscription, status} = await subscriptionService.addNewSubscription(subscriptionData)
         membersService.invalidateCache(subscription)
+        moviesService.invalidateCache(subscription)
         res.status(status).json({...subscription, id: subscription._id || subscription.id})
     } catch (err) {
         console.error('Error adding subscription: ', err);

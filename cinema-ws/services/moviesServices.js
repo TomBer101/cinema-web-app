@@ -29,7 +29,7 @@ const getAllMovies = async (pageNumber, feilds) => {
                 const { movies, totalCount } = await dataUtils.getData('movies', 300, requestedPage)
 
                 const transformedMovies = movies.map(({ _id, members, ...rest }) => {
-                const transformedMembers = members.map(({_id, restMem}) => ({id: _id, ...restMem}))
+                const transformedMembers = members.map(({_id, ...restMem}) => ({id: _id, ...restMem}))
 
                     return ({
                     ...rest,
@@ -122,10 +122,20 @@ const getMovieById = async (movieId) => {
 
 }
 
+const invalidateCache = (subscription) => {
+    for (let i = 0; i < movieCache.length; i++) {
+        if (movieCache[i].id === subscription.movieId) {
+            movieCache[i].members = [...movieCache[i].members, {id: subscription.memberId, watchedDate: subscription.date, name: subscription.memberName}] //? [...membersCache[i].movies] : [membersCache[i].movies].push({name: subscription.movieName, watchDate: subscription.watchDate, _id: subscription._id})
+            break
+        }
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
     deleteMovie,
-    getMovieById
+    getMovieById,
+    invalidateCache
 }

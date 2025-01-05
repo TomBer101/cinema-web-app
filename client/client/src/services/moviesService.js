@@ -23,7 +23,7 @@ export const fetchMovies = async (page) => {
                 ],
                 "image" : "https://static.tvmaze.com/uploads/images/medium_portrait/143/358967.jpg",
                 "premiered" : ("2012-10-10"),
-                "subscriptions": [
+                "members": [
                     {
                         "user": "user1",
                         "date": "2020-01-01"
