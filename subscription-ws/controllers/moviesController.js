@@ -79,5 +79,6 @@ module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    getMovieById
 }
