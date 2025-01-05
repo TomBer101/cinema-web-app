@@ -1,15 +1,5 @@
 import { deleteData, fetchData, patchData, postData } from '../utils/dataUtils'
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-}
-
-const formattedDate = formatDate('2014-09-24T00:00:00.000Z');
-console.log(formattedDate); // Output: 24/09/2014
+import { formatDate } from '../utils/formatting'
 
 
 export const fetchMovies = async (page) => {
@@ -100,5 +90,6 @@ export const getMoviesName = async (page, query) => {
 
 export const getMovieById = async (movieId) => {
     const {movie} = await fetchData(`/movies/${movieId}`)
+    movie.premiered = formatDate(movie.premiered)
     return movie
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
@@ -7,7 +7,7 @@ import { FormInputSelect } from './forms-components/FormInputSelect';
 import FormInputDate from './forms-components/FormInputDate';
 import { addSubscription } from '../../services/subscriptionsService';
 
-const AddMovieForm = ({memberId}) => {
+const AddMovieForm = ({memberId, movies}) => {
     const queryClient = useQueryClient()
     const { setValue, control, handleSubmit, reset, formState: {errors}, getValues} = useForm({
                 defaultValues: {
@@ -19,7 +19,7 @@ const AddMovieForm = ({memberId}) => {
     const {data: moviesNames, error, status, isLoading} = useQuery({
         queryKey: ['moviesNames'],
         queryFn: async () =>  {
-            const names = await getMoviesName(1, {fields: 'name'})
+            let {moviesProjection: names} = await getMoviesName(1, {fields: 'name'})
             return names
         },
     })
@@ -75,10 +75,18 @@ const AddMovieForm = ({memberId}) => {
         addSubscriptionMutation.mutate(reqBody)
     }
 
+    const relevantNames = useMemo(() => {
+        if (movies?.length > 0) {
+            const names = moviesNames?.filter(movie => !movies.includes(movie.id))
+            return names
+        } 
+        return moviesNames
+    }, [movies?.length, moviesNames])
+
 
     return (
         <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <FormInputSelect control={control} name='id' label='Movie Name: ' options={moviesNames} />
+            <FormInputSelect control={control} name='id' label='Movie Name: ' options={relevantNames} />
             <br/>
             <FormInputDate control={control} name={'date'} />
             <button type="submit">
