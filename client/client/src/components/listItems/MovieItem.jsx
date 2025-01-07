@@ -1,9 +1,12 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Button, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import React from 'react';
 import { useDeleteMovie } from '../../hooks/useMoviesMutations';
 import { useNavigate } from 'react-router-dom';
+import { getMember } from '../../services/membersService';
+import { formatDate } from '../../utils/formatting';
 
-const MovieItem = ({id, name, generes, image, premiered, subscriptions}) => {
+const MovieItem = ({id, name, generes, image, premiered, members}) => {
     const {mutate: deleteMovie} = useDeleteMovie()
     const navigate = useNavigate()
 
@@ -14,10 +17,21 @@ const MovieItem = ({id, name, generes, image, premiered, subscriptions}) => {
 
     const handleEditOnClick = () => {
         const state = {
-            id, name, generes, image, premiered, subscriptions 
+            id, name, generes, image, premiered, members 
         }
 
         navigate('edit', {state})
+    }
+
+    const handleMemberClick = async (memberId) => {
+        try {
+            const state = await getMember(memberId)
+            navigate('/subscriptions/edit', {state})
+        } catch (err) {
+            console.error('Error navigationg to edit member: ', err);
+            
+        }
+        
     }
 
 
@@ -27,26 +41,35 @@ const MovieItem = ({id, name, generes, image, premiered, subscriptions}) => {
             flexDirection: 'column',
             gap: '1vh'
         }}>
-            <Typography variant='h4'>{`${name}, ${premiered}`}</Typography>
+            <Typography variant='h4' sx={{fontSize: '1.8rem', fontWeight: 500}}>{`${name}, ${premiered}`}</Typography>
             <Typography variant='p'>{generes?.map(g => <span kye={g}>{g}</span>)}</Typography>
             <div>
                 <img style={{height: '10rem'}} src={image} />
                 <div>
                     Subscriptions: <br/>
-                    <ul style={{maxHeight: '8rem', overflowY: 'auto'}}>
-                        {
-                            subscriptions?.map((sub, index) =>  (
-                                <li key={index}>
-                                    <p>{`${sub.user}, ${sub.date}`}</p>
-                                </li>)
+                    <List style={{maxHeight: '8rem', overflowY: 'auto'}}>
+                    {
+                            
+                            members?.map((sub, index) =>  (
+                                <ListItem sx={{
+                                    cursor: 'pointer',
+                                    '&:hover' : {
+                                        color: '#698474'
+                                    }
+                                }}  key={index} onClick={() => handleMemberClick(sub.id)}>
+                                    <ListItemIcon sx={{color: 'inherit'}}>
+                                        <AccountCircleIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={`${sub.name}, ${formatDate(sub.watchedDate)}`} />
+                                </ListItem>)
                             )
                         }
-                    </ul>
+                    </List>
                 </div>
             </div>
             <div className="buttons" style={{display: 'flex', justifyContent: 'space-between'}}>
-                <button onClick={(e) => handleDelete(e)}>Delete</button>
-                <button onClick={() => handleEditOnClick()}>Edit</button> 
+                <Button color='error' variant='contained' onClick={(e) => handleDelete(e)}>Delete</Button>
+                <Button variant='contained' onClick={() => handleEditOnClick()}>Edit</Button> 
                 {/* click on edit should navigate to the edit page and passing as state the current page as well */}
             </div>
         </Box>

@@ -13,7 +13,7 @@ const SearchBar = ({onClick}) => { //onClick should be a callback to inform the 
         sx={{display: type !== 'movies'? 'none' : '',
             position: {md: 'absolute'},
             top: {md: '1rem'},
-            left: {md: '35.5rem'},
+            right: {md: '2rem'},
         }}
         label="Search"
         size='small'
