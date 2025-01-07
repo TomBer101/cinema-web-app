@@ -1,16 +1,14 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClientProvider } from 'react-query'
 
-import {AuthProvider} from './contetxt/AuthContext.jsx'
-import { LoginPage, RegisterPage} from './pages/index.js'
+import { AuthProvider } from './contetxt/AuthContext.jsx'
+import { LoginPage, RegisterPage } from './pages/index.js'
 
 
 import './index.css'
 import ProtectedRoute from './routes/ProtectedRoute.jsx'
 import AppLayout from './pages/AppLayout.js'
-import PageLayout from './pages/general/PageLayout.js'
 import ViewPage from './pages/general/ViewPage.jsx'
 import AddPage from './pages/general/AddPage.jsx'
 import EditPage from './pages/general/EditPage.jsx'
@@ -18,7 +16,7 @@ import EditPage from './pages/general/EditPage.jsx'
 import queryClient from './configs/reactQuery.js'
 
 const ErrorPage = () => {
-  return(
+  return (
     <h1>Ooopppssss</h1>
   )
 }
@@ -35,46 +33,44 @@ const ErrorPage = () => {
 
 const router = createBrowserRouter([
   {
-      element: <LoginPage />,
-      path: '/',
-      index: true
+    element: <LoginPage />,
+    path: '/',
+    index: true
   },
   {
-      element: <RegisterPage />,
-      path: 'register',
-  }, 
+    element: <RegisterPage />,
+    path: 'register',
+  },
   {
     element: <AppLayout />,
-    path: '/',
+    path: '/:type',
+
+
     children: [
       {
-        path: '/:type',
-        element: <PageLayout />,
-        children: [
-          {
-            path: '',
-            element: 
-              <ProtectedRoute >
-                <ViewPage />
-              </ProtectedRoute>
-          },
-          {
-            path: 'add',
-            element: 
-              <ProtectedRoute functionality='add'>
-                <AddPage />
-              </ProtectedRoute>
-          },
-          {
-            path: 'edit',
-            element: 
-              <ProtectedRoute functionality='edit'>
-                <EditPage />
-              </ProtectedRoute>
-          }
-        ]
+        path: '',
+        element:
+          <ProtectedRoute >
+            <ViewPage />
+          </ProtectedRoute>
+      },
+      {
+        path: 'add',
+        element:
+          <ProtectedRoute functionality='add'>
+            <AddPage />
+          </ProtectedRoute>
+      },
+      {
+        path: 'edit',
+        element:
+          <ProtectedRoute functionality='edit'>
+            <EditPage />
+          </ProtectedRoute>
       }
     ]
+
+
   },
   {
     path: 'error',
@@ -83,12 +79,12 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-          <AuthProvider >
+
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider >
       <RouterProvider router={router} />
     </AuthProvider>
-    </QueryClientProvider>
+  </QueryClientProvider>
 
-  </StrictMode>,
+
 )

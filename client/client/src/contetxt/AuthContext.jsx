@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import { loginUser, registerUser } from '../services/authService';
+import { loginUser, registerUser, validateSession } from '../services/authService';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const AuthContext = createContext();
@@ -15,6 +15,24 @@ export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useLocalStorage('cinema-ws-user', null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // useEffect(() => {
+    //     const initializerUser = async () => {
+    //         const storedUser = localStorage.getItem('cinema-ws-user')
+    //         if (storedUser) {
+    //             const user = JSON.parse(storedUser)
+    //             const sessionValidate = await validateSession(user)
+    //             if (sessionValidate) {
+    //                 setCurrentUser(user)
+    //             } else {
+    //                 localStorage.removeItem('cinema-ws-user')
+    //                 setCurrentUser(null)
+    //             }
+    //         }
+    //     };
+
+    //     initializerUser()
+    // }, [])
 
 
     // const signup = async ({firstName, lastName, userName, password, shareData}) => {
@@ -47,8 +65,11 @@ export function AuthProvider({ children }) {
             loginResult.data.permissions = loginResult.data.permissions.map(per => per.toLowerCase())
             if (loginResult.success) {
                 setCurrentUser(loginResult.data)
+                //localStorage.setItem('cinema-ws-user', JSON.stringify(loginResult.data)); // Store user data
+                return true
             } else {
                 setError(loginResult.message)
+                return false
             }
 
         } catch (err) {
@@ -60,7 +81,7 @@ export function AuthProvider({ children }) {
 
     function logout() {
         setCurrentUser(null);
-        navigate('/');
+        localStorage.removeItem('cinema-ws-user')
     }
 
     const value = useMemo( () => ({

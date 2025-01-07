@@ -13,8 +13,8 @@ const PageLayout = () => {
 
     return (
         <div>
-            <Stack direction="row" spacing={2} sx={{marginBottom: 2, backgroundColor:' #b9e6eb99', p:'1rem 2rem'}}>
-            <Typography sx={{fontSize: '2.3rem', fontWeight: '500',  padding: '0.5rem 3rem', flex: 1}} variant='h2'>{type}</Typography>
+            <Stack direction="row" spacing={2} sx={{marginBottom: 2, backgroundColor:' #b9e6eb99', p:'1rem 2rem', alignItems: 'center'}}>
+            <Typography sx={{fontSize: '2.3rem', fontWeight: '500',  flex: 1}} variant='h2'>{type}</Typography>
             <Stack sx={{padding: '0 3rem', gap: '5%', flex: 1, alignItems: 'center'}} direction='row'>
                 <NavLink  to=''>{`All ${type}`}</NavLink>
                 <NavLink to='add'>{`Add ${type}`}</NavLink>

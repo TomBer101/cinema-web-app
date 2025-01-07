@@ -44,3 +44,13 @@ export const loginUser = async (userName, password) => {
         throw err
     }
 }
+
+export const validateSession = async (user) => {
+    try {
+        const {data} = await postData('/auth/validateSession', {user})
+        return data.isValid
+    } catch (err) {
+        console.error('Error validating session: ', err);
+        return false
+    }
+}

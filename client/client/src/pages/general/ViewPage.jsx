@@ -57,6 +57,7 @@ const ViewPage = () => {
             const nextPage = lastPage.hasMore? pages.length + 1 : undefined;
             return nextPage
         },
+        enabled: !itemId && !searchTerm ,
     })
 
     const {data: specificItem, isLoading: isLoadingItem} = useQuery(
@@ -117,22 +118,6 @@ const ViewPage = () => {
         const res = data?.pages.flatMap(page => page.data) || []
         return res
     }, [data, specificItem, itemId])
-
-
-    // let items = []
-    // const cachedData = data? data.pages.flatMap(page => page) : []
-
-    // if (location.state?.id) {
-    //     items = cachedData.filter(item => item.id === location.state.id)
-
-    //     if (items?.length === 0) {
-    //         const fetchItem = async (id) => {
-                
-    //         }
-    //     }
-    // } else {
-    //     items = data?.pages.flatMap(page => page)
-    // }
    
 
     if (isLoading) return <p>Loading...</p>

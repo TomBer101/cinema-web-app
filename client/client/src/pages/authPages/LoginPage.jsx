@@ -24,11 +24,11 @@ const LoginPage = () => {
     const onSubmit = async (data) => {
         try {
             const res = await onLogin(data.username, data.password)
-            if (error) {
+            if (!res) {
                 setIsModalOpen(true)
             }
 
-            if (currentUser) {
+            if (res) {
                 navigate('/movies')
             }
         } catch (err) {
@@ -76,7 +76,6 @@ const LoginPage = () => {
                         {/* <label htmlFor='username'>Username:</label> */}
                         <input
                             id='username'
-                            autoCapitalize='off'
                             className={styles.inputField}
                             placeholder='Username'
                             {...register('username', { required: 'Username is requierd' })}

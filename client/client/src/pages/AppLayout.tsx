@@ -6,7 +6,7 @@ import { useAuth } from '../contetxt/AuthContext';
 import styles from '../styles/navbar.module.css'
 
 const AppLayout = () => {
-    const { currentUser } = useAuth()
+    const { currentUser, onLogOut } = useAuth()
     const { type } = useParams()
 
     return (
@@ -47,7 +47,7 @@ const AppLayout = () => {
                         color: isActive ? 'white' : 'black',
                         boxShadow: '0 0.7em 1.5em -0.5em #626F47',
                     })} to='/subscriptions'>Subscription</NavLink>
-                    {currentUser.admin &&
+                    {currentUser?.admin &&
                         <NavLink className={styles.navLink} style={({ isActive }) => ({
                             border: '2px solid #626F47',
                             backgroundColor: isActive ? '#A5B68D' : 'transparent',
@@ -58,7 +58,7 @@ const AppLayout = () => {
                         >Users Managment
                         </NavLink>
                     }
-                    <Button color='error' variant='outlined'>Logout</Button>
+                    <Button color='error' variant='outlined' onClick={onLogOut}>Logout</Button>
                 </Stack>
 
                 <Stack direction="row" spacing={2} sx={{ marginBottom: 2, backgroundColor: ' #FAF6E3', p: '1rem 2rem', alignItems: 'center' }}>
