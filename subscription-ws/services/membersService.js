@@ -8,73 +8,88 @@ const getAllMembers = async (page, limit) => {
     const skip = (page - 1) * limit;
 
     try {
-        const members = await Member.aggregate([
-            { $match: {} },            
-            {$skip: skip},
-            {$limit: limit},
+        const results = await Member.aggregate([
             {
-                $lookup: {
-                    from: 'subscriptions',
-                    localField: '_id',
-                    foreignField: 'memberId',
-                    as: 'subscriptions'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$subscriptions',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $unwind: {
-                    path: '$subscriptions.movies',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $lookup: {
-                    from: 'movies',
-                    localField: 'subscriptions.movies.movieId',
-                    foreignField: '_id',
-                    as: 'movies'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$movies',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    name: {$first: '$name'},
-                    email: {$first: '$email'},
-                    city: {$first: '$city'},
-                    movies: {
-                        $push: {
-                            _id: '$movies._id',
-                            name: '$movies.name',
-                            watchDate: '$subscriptions.movies.date'
+                $facet: {
+                    data: [
+                        { $match: {} },            
+                        {$skip: skip},
+                        {$limit: limit},
+                        {
+                            $lookup: {
+                                from: 'subscriptions',
+                                localField: '_id',
+                                foreignField: 'memberId',
+                                as: 'subscriptions'
+                            }
+                        },
+                        {
+                            $unwind: {
+                                path: '$subscriptions',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        {
+                            $unwind: {
+                                path: '$subscriptions.movies',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'movies',
+                                localField: 'subscriptions.movies.movieId',
+                                foreignField: '_id',
+                                as: 'movies'
+                            }
+                        },
+                        {
+                            $unwind: {
+                                path: '$movies',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: '$_id',
+                                name: {$first: '$name'},
+                                email: {$first: '$email'},
+                                city: {$first: '$city'},
+                                movies: {
+                                    $push: {
+                                        _id: '$movies._id',
+                                        name: '$movies.name',
+                                        watchDate: '$subscriptions.movies.date'
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            $addFields: {
+                                movies: {
+                                    $cond: {
+                                        if: { $eq: ['$movies', [{}]] }, // If the movies array contains an empty object
+                                        then: [], // Replace with an empty array
+                                        else: '$movies' // Otherwise, keep the movies array as is
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-            },
-            {
-                $addFields: {
-                    movies: {
-                        $cond: {
-                            if: { $eq: ['$movies', [{}]] }, // If the movies array contains an empty object
-                            then: [], // Replace with an empty array
-                            else: '$movies' // Otherwise, keep the movies array as is
-                        }
-                    }
+                    ],
+                    totalCount: [
+                        { $count: "count" } 
+                    ]
                 }
             }
         ])
 
-        return members
+        const members = results[0].data
+        const totalCount = results[0].totalCount[0]?.count || 0
+
+        return {
+            members,
+            totalCount
+        }
     } catch (err) {
         console.error('Error fetching all members: ', err);
         throw new AppError('InternalServer Error', 500)

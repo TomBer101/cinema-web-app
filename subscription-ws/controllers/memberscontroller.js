@@ -7,8 +7,8 @@ const getAllMembers = async (req, res) => {
 
     try {
             
-        const members = await membersService.getAllMembers(page, limit)
-        res.status(200).json({members})
+        const result = await membersService.getAllMembers(page, limit)
+        res.status(200).json(result)
     } catch (err) {
         console.error('Error get all member: ', err);
         res.status(err.statusCode || err.status).json({message: err.message})

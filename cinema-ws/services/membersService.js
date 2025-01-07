@@ -1,10 +1,13 @@
 const dataUtils = require('../utils/wsUtils')
 const {AppError} = require('../classes/appErrors')
 
-let membersCache = []
-let cachPage = 0
+
 const MOVIES_PER_PAGE = 50;
 const MOVIES_PER_FETCH = 300;
+
+let membersCache = []
+let cachPage = 0
+let totalCount = 0
 
 const getAllMembers = async (pageNumber) => {
     const requestedIndex = (pageNumber - 1) * MOVIES_PER_PAGE
@@ -12,7 +15,7 @@ const getAllMembers = async (pageNumber) => {
     if (requestedIndex >= membersCache.length) {
         try {
             const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1
-            const {members} = await dataUtils.getData('members', 300, requestedPage)
+            const {members, totalCount} = await dataUtils.getData('members', 300, requestedPage)
 
             const transformedMembers = members.map(({_id, movies, ...rest}) => {
                 const trnasformedMovies = movies.map(movie => ({...movie, id: movie._id || movie.id}))
@@ -22,7 +25,9 @@ const getAllMembers = async (pageNumber) => {
                 id: _id,
                 })
             })
+
             membersCache = [...membersCache, ...transformedMembers]
+            cachPage = requestedPage
         } catch (err) {
             console.error('Error fetching members: ', err);
             throw new AppError('Error fetching membres', 500)
@@ -30,7 +35,10 @@ const getAllMembers = async (pageNumber) => {
     }
 
     const slice = membersCache.slice(requestedIndex, requestedIndex + MOVIES_PER_PAGE)
-    return slice
+    const hasMore = membersCache.length > requestedIndex + MOVIES_PER_PAGE ||
+    (cachPage * MOVIES_PER_FETCH < totalCount); 
+
+    return {data: slice, hasMore}
 }
 
 const addMember = async (memberInfo) => {
