@@ -209,10 +209,121 @@ const getMovieById = async (movieId) => {
     }
 }
 
+const getAllMoviesAsIs = async () => {
+    try {
+        const results = await Movie.aggregate([
+            {
+                $facet: {
+                    data: [
+                        {
+                            $match: {}
+                        },
+                        // Step 1: Lookup subscriptions for each movie to get all subscriptions with matching movies
+                        {
+                            $lookup: {
+                                from: 'subscriptions',
+                                localField: '_id',
+                                foreignField: 'movies.movieId',
+                                as: 'subscriptions'
+                            }
+                        },
+                        // Step 2: Unwind subscriptions array to work with each individual subscription entry
+                        {
+                            $unwind: {
+                                path: '$subscriptions',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        // Step 3: Unwind movies array within each subscription to access individual movie entries
+                        {
+                            $unwind: {
+                                path: '$subscriptions.movies',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        // Step 4: Match only movies within the subscription that correspond to the current movie ID
+                        {
+                            $match: {
+                                $or: [
+                                    {$expr: { $eq: ['$subscriptions.movies.movieId', '$_id'] }},
+                                    {'subscriptions': null}
+                                ]
+                            }
+                        },
+                        // Step 5: Lookup member data for each subscription
+                        {
+                            $lookup: {
+                                from: 'members',
+                                localField: 'subscriptions.memberId',
+                                foreignField: '_id',
+                                as: 'member'
+                            }
+                        },
+                        // Step 6: Unwind member data to link each subscription to a single member
+                        {
+                            $unwind: {
+                                path: '$member',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        // Step 7: Group back by movie ID, accumulating watcher data in `members`
+                        {
+                            $group: {
+                               _id: '$_id',
+                                name: { $first: '$name' },
+                                genres: { $first: '$genres' },
+                                image: { $first: '$image' },
+                                premiered: { $first: '$premiered' },
+                                members: {
+                                    $push: {
+                                        _id: '$member._id',
+                                        name: '$member.name',
+                                        watchedDate: '$subscriptions.movies.date'
+                                    }
+                                }
+                            }
+                        },
+                        // Step 8: Filter members to exclude empty data and retain all movies
+                        {
+                            $addFields: {
+                                members: {
+                                    $cond: {
+                                        if: { $eq: ['$members', [{}]] }, // If the movies array contains an empty object
+                                        then: [], // Replace with an empty array
+                                        else: '$members' // Otherwise, keep the movies array as is
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    ],
+                    totalCount: [
+                        { $count: "count" }
+                    ]
+                }
+            }
+            
+        ]);
+
+        const movies = results[0].data
+        const totalCount = results[0].totalCount[0]?.count || 0
+
+        
+        return {
+            movies,
+            totalCount
+        };
+    }catch (err) {
+        console.error('Error fetching all movies: ', err);
+        throw new AppError('Internal Server Error', 500)
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
     deleteMovie,
-    getMoviesProjection
+    getMoviesProjection,
+    getAllMoviesAsIs
 }

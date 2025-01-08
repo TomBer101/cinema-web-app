@@ -1,5 +1,6 @@
 const dataUtils = require('../utils/wsUtils')
-const AppError = require('../classes/appErrors')
+const AppError = require('../classes/appErrors');
+const { default: axios } = require('axios');
 
 
 const MOVIES_PER_PAGE = 50;
@@ -131,11 +132,22 @@ const invalidateCache = (subscription) => {
     }
 }
 
+const getAll = async () => {
+    try {
+        const {data} = await axios.get('http://localhost:8000/api/movies/all')
+        return data
+    } catch (err) {
+        console.error('Error fetching movies');
+            throw new AppError.AppError('Error fetching movies', 500)
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
     deleteMovie,
     getMovieById,
-    invalidateCache
+    invalidateCache,
+    getAll
 }

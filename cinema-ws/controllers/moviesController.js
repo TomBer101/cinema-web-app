@@ -15,6 +15,15 @@ const getAllMovies = async (req, res) => {
     }
 }
 
+const getAll = async (req, res) => {
+    try {
+        const movies = await moviesService.getAll()
+        res.status(200).json({movies})
+    } catch (err) {
+        res.status(500).json({err})
+    }
+}
+
 const addMovie = async (req, res) => {
     try {
         const result = await moviesService.addMovie(req.body)
@@ -78,5 +87,6 @@ module.exports = {
     addMovie,
     updateMovie,
     deleteMovie,
-    getMovie
+    getMovie,
+    getAll
 }

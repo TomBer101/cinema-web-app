@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { deleteData, fetchData, patchData, postData } from '../utils/dataUtils'
 import { formatDate } from '../utils/formatting'
 
@@ -64,6 +65,20 @@ export const fetchMovies = async (page) => {
     }
     
 };
+
+export const fetchMoviesSimple = async () => {
+    try {
+        const {data} = await axios.get('http://localhost:8080/api/movies/all')
+        data.movies.movies.forEach(movie => {
+            movie.premiered = formatDate(movie.premiered)
+        });
+
+        return data.movies
+    } catch (err) {
+        console.error('ERror: ', err);
+        return {hasMore: false, data: []};
+    }
+}
 
 export const addMovie = async (newMovie) => {
     const response = await postData('/movies', newMovie)

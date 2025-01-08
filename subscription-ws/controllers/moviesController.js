@@ -75,10 +75,23 @@ const getMovieById = async (req, res) => {
     }
 }
 
+const getMovies = async (req, res) => {
+    try {
+        const result = await moviesService.getAllMoviesAsIs()
+        res.status(200).json(result)
+    } catch (err) {
+        console.error('Error in subscription server - get all movies: ', err);
+        
+        res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
     deleteMovie,
-    getMovieById
+    getMovieById,
+
+    getMovies
 }
