@@ -10,7 +10,7 @@ let cachePage = 0;
 let totalCount = 0;
 
 
-const getAllMovies = async (pageNumber, feilds) => {
+const getAllMovies = async (pageNumber, feilds, name) => {
     const requestedIndex = (pageNumber - 1) * MOVIES_PER_PAGE
 
     try {
@@ -23,6 +23,13 @@ const getAllMovies = async (pageNumber, feilds) => {
             })
 
             return {moviesProjection, hasMore: false}
+        } else if (name) {
+            const name = name.toLowerCase()
+            const movies = movieCache.filter(movie => {
+                const movieName = movie.name.toLowerCase()
+                return movieName.includes(name)
+            })
+            return movies
         } else {
             if (requestedIndex >= movieCache.length) {
                 const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1

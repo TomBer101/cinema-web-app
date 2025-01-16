@@ -8,6 +8,15 @@ const SearchBar = ({onClick}) => { //onClick should be a callback to inform the 
     const [val, setVal] = useState('')
     const{type} = useParams()
 
+    const handleKeyPress = (event) => {
+        const key = event.key
+        if (key === 'Enter') {
+            onClick(val)
+        } else if ((key === "Backspace" || key === "Delete") && val.length === 1) {
+            onClick()
+        }
+    }
+
     return (
         <TextField 
         sx={{display: type !== 'movies'? 'none' : '',
@@ -19,7 +28,7 @@ const SearchBar = ({onClick}) => { //onClick should be a callback to inform the 
         size='small'
         value={val}
         onChange={e => setVal(e.target.value)}
-        onKeyPress={(e) => e.key === 'Enter' && onClick(val)}
+        onKeyDown ={handleKeyPress}
         slotProps={{
             input: {
                 

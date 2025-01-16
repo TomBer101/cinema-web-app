@@ -2,9 +2,10 @@ import { deleteData, fetchData, patchData, postData } from '../utils/dataUtils'
 import { formatDate } from '../utils/formatting'
 
 
-export const fetchMovies = async (page) => {
+export const fetchMovies = async (page, searchTerm = undefined) => {
     try {
-        const {movies}  = await fetchData('/movies', page)
+        const query = searchTerm? {name: searchTerm} : undefined
+        const {movies}  = await fetchData('/movies', page, query)
         movies.data.forEach(movie => {
             movie.premiered = formatDate(movie.premiered)
         });

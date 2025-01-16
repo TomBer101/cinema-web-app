@@ -22,7 +22,7 @@ const ViewPage = () => {
     const itemId = location.state?.id
 
 
-    const fetchDataByType = async ({pageParam}) => {
+    const fetchDataByType = async ({pageParam = 1}) => {
         switch (type) {
             case 'movies': 
                 const res = await fetchMovies(pageParam , searchTerm)
@@ -75,7 +75,7 @@ const ViewPage = () => {
 
     const {data: searchResult, refetch: searchMovie} = useQuery({
         queryKey: ['search', type],
-        queryFn: ({meta}) => fetchDataByType(meta.searchTerm),
+        queryFn: p => fetchDataByType(),
         enabled: !!searchTerm
     });
 
@@ -87,20 +87,25 @@ const ViewPage = () => {
     }, [inView, hasNextPage, fetchNextPage]);
 
     const handleSearch = async (searchTerm) => {
-        if (type !== 'movies' || !searchTerm.trim()) return;
+        if (type !== 'movies') return;
+
+        if (searchTerm === '' || searchTerm === undefined) {
+            queryClient.setQueryData(['search', type], () => []); 
+            return;
+        }
 
         const cachedMovies = queryClient.getQueryData(['fetchData', type], {exact: false});
-        const allFetchedMovies = cachedMovies?.flat() || []
-        const foundMovie = allFetchedMovies.find((movie) => movie.name.toLowerCase() === searchTerm.toLowerCase());
+        const allMovies = cachedMovies.pages.reduce((acc, page) => { return acc.concat(page.data); }, []);
+        const foundMovie = allMovies.filter((movie) => movie.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-        if (foundMovie) {
+        if (foundMovie && foundMovie.length !== 0) {
             console.log('Movie found in cached data:', foundMovie);
             queryClient.setQueryData(['search', type], ()=> foundMovie)
             return
         }
 
         // Fetch the movie if not found
-        const result = await searchMovie({meta: {searchTerm}});
+        const result = await searchMovie(searchTerm);
         console.log('Movie fetched from server:', result);
 
         // Add the result to the cached data
@@ -128,10 +133,21 @@ const ViewPage = () => {
             <Typography variant='h3'>{`All ${type}`}</Typography>
             <SearchBar onClick={handleSearch}/>
             <Box sx={{display: !searchResult? 'none' : 'block'}}>
-                {<ItemFactory type={type} props={searchResult} />}
+                <List sx={{width: '55%'}}>
+                {
+                    searchResult?.map((item, index) => {
+                        return (
+                            <ListItem key={index}>
+                                <ItemFactory type={type} props={item} />
+                            </ListItem>
+                        )
+                    })
+                }
+                </List>
+
             </Box>
-            <List sx={{
-                width: '55%'
+            {(!searchResult || searchResult.length === 0) && <List sx={{
+                width: '55%',
             }}>
                 {
                    
@@ -154,7 +170,7 @@ const ViewPage = () => {
                 {
                    hasNextPage && <div ref={observer} >Loading more...</div>
                 }
-            </List>
+            </List>}
         </div>
     );
 };
