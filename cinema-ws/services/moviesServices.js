@@ -5,6 +5,7 @@ const AppError = require('../classes/appErrors')
 const MOVIES_PER_PAGE = 50;
 const MOVIES_PER_FETCH = 300;
 
+const cachedMovieIds = new Set();
 let movieCache = [];
 let cachePage = 0; 
 let totalCount = 0;

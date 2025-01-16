@@ -3,7 +3,7 @@ const moviesService = require('../services/moviesService')
 const getAllMovies = async (req, res) => {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 300
-    const {feilds} = req.query
+    const {feilds, name} = req.query
 
     try {
         if (feilds) {
@@ -11,8 +11,13 @@ const getAllMovies = async (req, res) => {
             const projection = feilds.replace(',', '')
             const movies = await moviesService.getMoviesProjection(projection, skip)
             res.status(200).json({movies})
-        } else {
-            const result = await moviesService.getAllMovies(page, limit)
+        } 
+        // else if (name) {
+        //     const movies = await moviesService.getMoviesByName(name)
+        //     res.status(200).json({movies})
+        // } 
+        else {
+            const result = await moviesService.getAllMovies(page, limit, name)
             res.status(200).json(result)
         }
         

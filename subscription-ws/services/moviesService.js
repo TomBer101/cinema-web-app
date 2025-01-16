@@ -2,7 +2,7 @@ const Movie = require('../models/movieModel')
 const AppError = require('../classes/appError')
 
 
-const getAllMovies = async (page, limit) => { // TODO: add watchers data
+const getAllMovies = async (page, limit, name) => { // TODO: add watchers data
     const skip = (page - 1) * limit
     try {
         const results = await Movie.aggregate([
@@ -10,7 +10,7 @@ const getAllMovies = async (page, limit) => { // TODO: add watchers data
                 $facet: {
                     data: [
                         {
-                            $match: {}
+                            $match: name? {name: {$regex: new RegExp(name, 'i')}} : {}
                         },
                         {$skip: skip},
                         {$limit: limit + 1},
@@ -209,10 +209,23 @@ const getMovieById = async (movieId) => {
     }
 }
 
+const getMoviesByName = async (name) => {
+    try {
+        const regex = new RegExp(name, 'i');
+        const movies = await Movie.find({name: regex}) 
+        return movies
+    } catch (err) {
+        console.error('Error getting movie by name: ', err);
+        throw new AppError('Internal Server Error', 500);
+        
+    }
+}
+
 module.exports = {
     getAllMovies,
     addMovie,
     updateMovie,
     deleteMovie,
-    getMoviesProjection
+    getMoviesProjection,
+    getMoviesByName
 }
