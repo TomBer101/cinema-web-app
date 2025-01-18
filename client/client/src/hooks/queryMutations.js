@@ -53,10 +53,10 @@ export function useGenericDelete(mutationFn, queryKey) {
             const previousData = queryClient?.getQueryData(queryKey, {exact: false});
             
             const updatedPages = previousData.pages.map(page => {
-                const itemIndex = page.findIndex(item => item.id === id)
+                const itemIndex = page.data.findIndex(item => item.id === id)
 
                 if (itemIndex !== -1) {
-                    return [...page.slice(0, itemIndex), ...page.slice(itemIndex + 1)]
+                    page.data =  [...page.data.slice(0, itemIndex), ...page.data.slice(itemIndex + 1)]
                 }
 
                 return page

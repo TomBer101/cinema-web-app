@@ -49,7 +49,7 @@ const updateMovie = async (req, res) => {
 }
 
 const deleteMovie = async (req, res) => {
-    const {movieId} = req.params
+    const {movieId} = req.query
 
     try {
         const result = await moviesService.deleteMovie(movieId)

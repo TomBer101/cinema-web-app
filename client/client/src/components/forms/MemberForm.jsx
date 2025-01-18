@@ -26,17 +26,22 @@ const MemberForm = (props) => {
         onSuccess: (newUserFromServer) => {
             // Update the paginated cache with the new user
             queryClient.setQueriesData({queryKey: ['fetchData', 'subscriptions'], exact: false}, (oldData) => {
+
                 if (!oldData || !oldData.pages || oldData.pages.length === 0) {
                     // Initialize with the new user in the first page
-                    return { ...oldData, pages: [[newUserFromServer]] };
+                    return { ...oldData, pages: [{data: newUserFromServer.data.newMember, hasMore: true}] };
                 }
     
                 // Add the new user to the beginning of the first page
-                const updatedFirstPage = [newUserFromServer, ...oldData.pages[0]];
-                return {
-                    ...oldData,
-                    pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-                };
+                const updatedFirstPage = [newUserFromServer.data.newMember, ...oldData.pages[0].data];
+                const {data: firstPageData, hasMore} = oldData.pages[0]
+                return { ...oldData, pages: [{data: updatedFirstPage, hasMore: hasMore}, ...oldData.pages.slice(0, 1)] };
+
+                // const res = {
+                //     ...oldData,
+                //     pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+                // }
+                // return res;
             });
         },
         onError: (error) => {
