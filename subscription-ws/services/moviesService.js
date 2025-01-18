@@ -12,8 +12,6 @@ const getAllMovies = async (page, limit, name) => { // TODO: add watchers data
                         {
                             $match: name? {name: {$regex: new RegExp(name, 'i')}} : {}
                         },
-                        {$skip: skip},
-                        {$limit: limit + 1},
                         // Step 1: Lookup subscriptions for each movie to get all subscriptions with matching movies
                         {
                             $lookup: {
@@ -91,7 +89,11 @@ const getAllMovies = async (page, limit, name) => { // TODO: add watchers data
                                     
                                 }
                             }
-                        }
+                        },
+                        
+                        {$sort: {name: 1}},
+                        {$skip: skip},
+                        {$limit: limit + 1},
                     ],
                     totalCount: [
                         { $count: "count" }
