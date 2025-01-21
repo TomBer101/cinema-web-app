@@ -25,11 +25,12 @@ const getAllMovies = async (pageNumber, feilds, name) => {
 
             return {moviesProjection, hasMore: false}
         } else if (name) {
-            const name = name.toLowerCase()
+            const formatedName = name.toLowerCase()
             const movies = movieCache.filter(movie => {
                 const movieName = movie.name.toLowerCase()
-                return movieName.includes(name)
+                return movieName.includes(formatedName)
             })
+
             return movies
         } else {
             if (requestedIndex >= movieCache.length) {
@@ -37,7 +38,9 @@ const getAllMovies = async (pageNumber, feilds, name) => {
                 const { movies, totalCount } = await dataUtils.getData('movies', 300, requestedPage)
 
                 const transformedMovies = movies.map(({ _id, members, ...rest }) => {
-                const transformedMembers = members.map(({_id, ...restMem}) => ({id: _id, ...restMem}))
+                    cachedMovieIds.add(_id)
+
+                    const transformedMembers = members.map(({_id, ...restMem}) => ({id: _id, ...restMem}))
 
                     return ({
                     ...rest,
@@ -46,6 +49,7 @@ const getAllMovies = async (pageNumber, feilds, name) => {
                     })
             }
             )
+
                 movieCache = [...movieCache, ...transformedMovies]
                 cachePage = requestedPage
             }
