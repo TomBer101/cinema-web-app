@@ -24,14 +24,7 @@ const MovieItem = ({id, name, generes, image, premiered, members}) => {
     }
 
     const handleMemberClick = async (memberId) => {
-        try {
-            const state = await getMember(memberId)
-            navigate('/subscriptions/edit', {state})
-        } catch (err) {
-            console.error('Error navigationg to edit member: ', err);
-            
-        }
-        
+        navigate('/subscriptions', {state: {id: memberId}})
     }
 
 

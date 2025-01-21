@@ -87,7 +87,7 @@ const getMember = async (memberId) => {
         return member
     } else {
         try {
-            const res = await dataUtils.getData('members', memberId)
+            const res = await dataUtils.getData(`members/${memberId}`)
             return res
         } catch (err) {
             console.error('Error getting member: ', err)

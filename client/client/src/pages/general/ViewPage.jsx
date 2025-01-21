@@ -11,6 +11,7 @@ import SearchBar from '../../components/common/SearchBar';
 
 const MAX_ENTITIES_PER_PAGE  = 10
 import { fetchSubscriptions } from '../../services/subscriptionsService';
+import { getMember } from '../../services/membersService';
 
 const ViewPage = () => {
     const {type} = useParams()
@@ -40,6 +41,8 @@ const ViewPage = () => {
         switch (type) {
             case 'movies':
                 return await getMovieById(id)
+            case 'subscriptions':
+                return await getMember(id)
             default:
                 throw new Error(`Unknown type: ${type}`)
         }
@@ -168,7 +171,7 @@ const ViewPage = () => {
                     
                 }
                 {
-                   hasNextPage && <div ref={observer} >Loading more...</div>
+                   !specificItem && hasNextPage && <div ref={observer} >Loading more...</div>
                 }
             </List>}
         </div>

@@ -26,6 +26,10 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
         navigate('edit', {state : state})
     }
 
+    const handleMovieClick = async (movieId) => {
+        navigate('/movies', {state: {id: movieId}})
+    }
+
     return (
         <Box sx={{
             display: 'flex',
@@ -53,7 +57,7 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
                                     '&:hover': {
                                         color: '#9A86A4'
                                     }
-                                }} key={index} onClick={() => navigate('/movies', {state: {id: movie.id}})}>
+                                }} key={index} onClick={() => handleMovieClick(movie.id)}>
                                     <ListItemIcon sx={{color: 'inherit'}}>
                                         <LocalMoviesIcon />
                                     </ListItemIcon>
