@@ -19,9 +19,9 @@ export function useUpdateMutation(mutationFn, queryKey) {
             const prevData = queryClient.getQueryData(queryKey, {exact: false})
 
             const updatedPages = prevData?.pages.map ( page => {
-                const itemIndex = page.findIndex(item => item.id === updatedItem.id)
+                const itemIndex = page.data.findIndex(item => item.id === updatedItem.id)
                 if (itemIndex !== -1) {
-                    return [...page.slice(0, itemIndex), ...page.slice(itemIndex + 1)]
+                    return [...page.data.slice(0, itemIndex), ...page.data.slice(itemIndex + 1)]
                 }
 
                 return page

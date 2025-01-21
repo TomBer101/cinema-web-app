@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button';
 
 import { useDeleteUser } from '../../hooks/useUserMutations';
 import { useNavigate } from 'react-router-dom';
@@ -46,8 +47,8 @@ const UserItem = ({id, firstName, lastName, userName, createdDate, sessionTimeou
             </div>
 
             <div className="buttons" style={{display: 'flex', justifyContent: 'space-between'}}>
-                <button onClick={(e) => handleDelete(e)}>Delete</button>
-                <button onClick={() => handleEditOnClick()}>Edit</button> 
+                <Button color='error' variant='contained' onClick={(e) => handleDelete(e)}>Delete</Button>
+                <Button variant='contained' onClick={() => handleEditOnClick()}>Edit</Button> 
                 {/* click on edit should navigate to the edit page and passing as state the current page as well */}
             </div>
         </Box>

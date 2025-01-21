@@ -61,6 +61,10 @@ const addMember = async (memberInfo) => {
 const updateMember = async (memberId, newData) => {
     try {
         const res = await dataUtils.patchData('members', memberId, newData)
+        
+        if (res.status === 200) {
+            updateCache(memberId, newData)
+        }
         return res
     } catch (err) {
         console.error(`Error updating member: `, err);
@@ -103,6 +107,14 @@ const invalidateCache = (subscription) => {
             break
         }
     }
+}
+
+const updateCache = (memberId, newData) => {
+    const index = membersCache.findIndex(member => member.id === memberId)
+    if (index !== -1) {
+        membersCache[index] = newData
+        }
+        
 }
 
 module.exports = {
