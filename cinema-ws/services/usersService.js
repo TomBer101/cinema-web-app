@@ -2,6 +2,10 @@ const usersRepo = require('../repositories/usersRepo')
 const permissionsRepo = require('../repositories/persmissionsRepo')
 const User = require('../mongoDB/models/userModel')
 
+let usersCache = []
+let cachePage = 0
+let totalCount = 0
+
 const getAllUsers = async () => {
     try {
         const {users} = await usersRepo.getAllUsers()
@@ -15,7 +19,7 @@ const getAllUsers = async () => {
             }
         })
 
-        return result
+        return {data: result, hasMore: false}
     } catch (err) {
         console.error('Error gettung all user: ', err)
         throw new Error('Internal server error')
