@@ -6,6 +6,7 @@ import {getMoviesName} from '../../services/moviesService'
 import { FormInputSelect } from './forms-components/FormInputSelect';
 import FormInputDate from './forms-components/FormInputDate';
 import { addSubscription } from '../../services/subscriptionsService';
+import { Button } from '@mui/material';
 
 const AddMovieForm = ({memberId, movies}) => {
     const queryClient = useQueryClient()
@@ -89,9 +90,9 @@ const AddMovieForm = ({memberId, movies}) => {
             <FormInputSelect control={control} name='id' label='Movie Name: ' options={relevantNames} />
             <br/>
             <FormInputDate control={control} name={'date'} />
-            <button type="submit">
+            <Button color='success' variant='outlined' type="submit" style={{display: 'block'}}>
                 Subscribe
-            </button>
+            </Button>
         </form>
     );
 };

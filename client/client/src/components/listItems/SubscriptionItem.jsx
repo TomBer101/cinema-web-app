@@ -1,7 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemIcon, ListItemText, Button } from '@mui/material';
 import LocalMoviesIcon from '@mui/icons-material/LocalMovies';
 
 import { useDeleteMember } from '../../hooks/useMembersMutations';
@@ -36,16 +36,16 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
             flexDirection: 'column',
             gap: '1vh'
         }}>
-            <Typography variant='h3'>{name}</Typography>
+            <Typography fontSize='1.5rem' fontWeight='500' variant='h3'>{name}</Typography>
             <Typography variant='body1'>{`Email: ${email}`}</Typography>
             <Typography variant='body1'>{`City: ${city}`}</Typography>
-            <div className="buttons" style={{display: 'flex', justifyContent: 'space-between'}}>
-                <button onClick={(e) => handleDelete(e)}>Delete</button>
-                <button onClick={() => handleEditOnClick()}>Edit</button> 
+            <div className="buttons" style={{display: 'flex', justifyContent: 'space-between', margin: '1rem 0'}}>
+                <Button color='error' variant='contained' onClick={(e) => handleDelete(e)}>Delete</Button>
+                <Button variant='contained' onClick={() => handleEditOnClick()}>Edit</Button> 
                 {/* click on edit should navigate to the edit page and passing as state the current page as well */}
             </div>
 
-            <Typography variant='h4'>Movies Watched</Typography>
+            <Typography variant='h6'>Movies Watched</Typography>
             <AddMovieForm memberId={id} movies={movies?.map(movie => movie.id)}/>
             <List sx={{maxHeight: '8rem', overflowY: 'auto'}}>
                 {

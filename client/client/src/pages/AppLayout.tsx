@@ -13,7 +13,7 @@ const AppLayout = () => {
         <div>
             <Typography
                 sx={{
-                    fontSize: '3rem',
+                    fontSize: '2rem',
                     fontWeight: 400,
                     padding: '1rem',
                     textAlign: 'center'

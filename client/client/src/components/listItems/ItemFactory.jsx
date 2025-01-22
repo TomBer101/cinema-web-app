@@ -25,7 +25,7 @@ const ItemFactory = ({type, props}) => {
     }
 
     return (
-        <Card raised={true} sx={{ p: '1rem 2rem', width: '100%'}}>
+        <Card raised={true} sx={{ p: '1rem 2rem', width: '100%', borderRadius: '2rem'}}>
             {itemComponent}
         </Card>
     )
