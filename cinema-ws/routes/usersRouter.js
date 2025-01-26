@@ -4,7 +4,7 @@ const userController = require('../controllers/usersController')
 const {adminRoute} = require('../middlewares/authMiddlewares')
 
 const router = express.Router()
-//router.use(adminRoute)
+router.use(adminRoute)
 
 router.get('/', userController.getAllUsers)
 router.delete('/', userController.deleteUser)

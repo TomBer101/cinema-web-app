@@ -5,8 +5,8 @@ const authMiddleware = require('../middlewares/authMiddlewares')
 
 const router = express.Router()
 
-router.post('/:memberId', subscriptionController.addSubscription)
+router.post('/:memberId', authMiddleware.checkPermissions('Create Subscriptions'), subscriptionController.addSubscription)
 router.get('/', authMiddleware.checkPermissions('View Subscriptions'), subscriptionController.getAllSubscriptions)
-router.delete('/:memberId', subscriptionController.deleteSubscription)
+router.delete('/:memberId', authMiddleware.checkPermissions('Delete Subscriptions'), subscriptionController.deleteSubscription)
 
 module.exports = router
