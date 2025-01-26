@@ -27,7 +27,7 @@ const UserItem = ({id, firstName, lastName, userName, createdDate, sessionTimeou
 
     return (
         <Box sx={{
-            display: 'flex', flexDirection: 'column', gap: '1vh',
+            display: 'flex', width: '100%', flexDirection: 'column', gap: '1vh',
             '& p': {
                 m: 0
             }

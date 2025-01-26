@@ -1,14 +1,15 @@
 import { Card } from "@mui/material"
+import { useState } from "react"
+import { motion, useMotionValue, useTransform } from 'framer-motion'
+
 import MovieItem from "./MovieItem"
 import UserItem from "./UserItem"
 import SubscriptionItem from "./SubscriptionItem"
+import TiltCard from "../animated/TiltCard"
 
-const ItemFactory = ({type, props}) => {
+const ItemFactory = ({ type, props }) => {
 
-    let itemComponent
-
-    //console.log("Item Factory props: ", props);
-    
+let itemComponent
 
     switch (type) {
         case 'movies':
@@ -21,14 +22,19 @@ const ItemFactory = ({type, props}) => {
             itemComponent = <SubscriptionItem {...props} />
             break
         default:
-            itemComponent =<p>{`Type ${type} is Unknown`}</p>
+            itemComponent = <p>{`Type ${type} is Unknown`}</p>
     }
 
     return (
-        <Card raised={true} sx={{ p: '1rem 2rem', width: '100%', borderRadius: '2rem'}}>
-            {itemComponent}
-        </Card>
+
+<TiltCard>
+    {itemComponent}
+</TiltCard>
+                    
+
     )
-} 
+
+    
+}
 
 export default ItemFactory

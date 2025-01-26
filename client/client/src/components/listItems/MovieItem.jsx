@@ -32,7 +32,7 @@ const MovieItem = ({id, name, generes, image, premiered, members}) => {
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '1vh'
+            gap: '1vh', width: '100%'
         }}>
             <Typography variant='h4' sx={{fontSize: '1.8rem', fontWeight: 500}}>{`${name}, ${premiered}`}</Typography>
             <Typography variant='p'>{generes?.map(g => <span kye={g}>{g}</span>)}</Typography>
