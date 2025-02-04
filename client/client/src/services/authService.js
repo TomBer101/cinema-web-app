@@ -1,9 +1,9 @@
 import { postData } from '../utils/dataUtils';
 
 
-export const registerUser = async (userInfo) => {
+export const registerUser = async (userName, password) => {
     try {
-        const {data, statusCode} = await postData('/auth/signup', userInfo)
+        const {data, statusCode} = await postData('/auth/signup', {userName, password})
         
         if (statusCode === 200) {
             return {

@@ -10,7 +10,7 @@ const ProtectedRoute = ({functionality = 'view', children}) => {
     if (!currentUser) {
         return <Navigate to="/" replace={true} />
     } else if ( (!currentUser.permissions.includes(`${functionality} ${type}`)) && !currentUser.admin) {
-        return <Navigate to='/error' />
+        return <Navigate to={`/${type}/error`} />
     } else {
         return (
             children

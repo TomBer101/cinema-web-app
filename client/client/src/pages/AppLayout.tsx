@@ -61,32 +61,49 @@ const AppLayout = () => {
                     <Button color='error' variant='outlined' onClick={onLogOut}>Logout</Button>
                 </Stack>
 
-                <Stack direction="row" spacing={2} sx={{ marginBottom: 2, backgroundColor: ' #FAF6E3', p: '1rem 2rem', alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: '2.3rem', fontWeight: '500', flex: 1 }} variant='h2'>{type}</Typography>
-                    <Stack sx={{ padding: '0 3rem', gap: '5%', flex: 1, alignItems: 'center' }} direction='row'>
-                        <NavLink  className={styles.navLink}
-                            style={({ isActive }) => ({
-                            border: '2px solid #626F47',
-                            backgroundColor: isActive ? '#A5B68D' : 'transparent',
-                            color: isActive ? 'white' : 'black',
-                            boxShadow: '0 0.7em 1.5em -0.5em #626F47'
-                            })} 
-                            to=''
-                            end
-                        >{`All ${type}`}
-                        </NavLink>
-                        <NavLink className={styles.navLink}
-                            style={({ isActive }) => ({
-                            border: '2px solid #626F47',
-                            backgroundColor: isActive ? '#A5B68D' : 'transparent',
-                            color: isActive ? 'white' : 'black',
-                            boxShadow: '0 0.7em 1.5em -0.5em #626F47'
-                            })} 
-                            to='add'
-                            end
-                        >{`Add ${type}`}</NavLink>
+                {type !== 'error' &&
+                    <Stack direction="row" spacing={2} sx={{ marginBottom: 2, backgroundColor: ' #FAF6E3', p: '1rem 2rem', alignItems: 'center' }}>
+                        <Typography sx={{ fontSize: '2.3rem', fontWeight: '500', flex: 1 }} variant='h2'>{type}</Typography>
+                        <Stack sx={{ padding: '0 3rem', gap: '5%', flex: 1, alignItems: 'center' }} direction='row'>
+                            <NavLink  className={styles.navLink}
+                                style={({ isActive }) => ({
+                                border: '2px solid #626F47',
+                                backgroundColor: isActive ? '#A5B68D' : 'transparent',
+                                color: isActive ? 'white' : 'black',
+                                boxShadow: '0 0.7em 1.5em -0.5em #626F47'
+                                })} 
+                                to=''
+                                end
+                            >{`All ${type}`}
+                            </NavLink>
+                            {
+                                type !== 'users' &&
+                                <NavLink className={styles.navLink}
+                                style={({ isActive }) => ({
+                                border: '2px solid #626F47',
+                                backgroundColor: isActive ? '#A5B68D' : 'transparent',
+                                color: isActive ? 'white' : 'black',
+                                boxShadow: '0 0.7em 1.5em -0.5em #626F47'
+                                })} 
+                                to='add'
+                                end
+                            >{`Add ${type}`}</NavLink>
+                            }
+                            {
+                                type === 'users' && currentUser.admin &&
+                                <NavLink className={styles.navLink}
+                                style={({ isActive }) => ({
+                                border: '2px solid #626F47',
+                                backgroundColor: isActive ? '#A5B68D' : 'transparent',
+                                color: isActive ? 'white' : 'black',
+                                boxShadow: '0 0.7em 1.5em -0.5em #626F47'
+                                })} 
+                                to='add'
+                                end
+                            >{`Add ${type}`}</NavLink>}
+                        </Stack>
                     </Stack>
-                </Stack>
+                }
             </div>
 
 

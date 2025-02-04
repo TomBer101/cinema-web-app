@@ -12,14 +12,11 @@ import AppLayout from './pages/AppLayout.js'
 import ViewPage from './pages/general/ViewPage.jsx'
 import AddPage from './pages/general/AddPage.jsx'
 import EditPage from './pages/general/EditPage.jsx'
+import ErrorPage from './pages/ErrorPage.jsx'
 
 import queryClient from './configs/reactQuery.js'
 
-const ErrorPage = () => {
-  return (
-    <h1>Ooopppssss</h1>
-  )
-}
+
 
 // import {router} from './routes/router.js'
 
@@ -44,8 +41,6 @@ const router = createBrowserRouter([
   {
     element: <AppLayout />,
     path: '/:type',
-
-
     children: [
       {
         path: '',
@@ -67,15 +62,13 @@ const router = createBrowserRouter([
           <ProtectedRoute functionality='edit'>
             <EditPage />
           </ProtectedRoute>
+      },
+      {
+        path: 'error',
+        element: <ErrorPage />,
       }
     ]
-
-
   },
-  {
-    path: 'error',
-    element: <ErrorPage />
-  }
 ])
 
 createRoot(document.getElementById('root')!).render(
