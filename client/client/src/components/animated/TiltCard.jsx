@@ -17,7 +17,6 @@ const TiltCard = ({ children }) => {
     if (ref.current) {
       const { width, height } = ref.current.getBoundingClientRect();
       setBounds({ width, height });
-      console.log("Bounds updated:", width, height);
     }
   }, []);
 

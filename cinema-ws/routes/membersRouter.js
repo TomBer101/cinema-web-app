@@ -8,8 +8,8 @@ const router = express.Router()
 
 router.get('/', authMiddleware.checkPermissions('View Subscriptions'), membersController.getAllMembers)
 router.get('/:memberId', authMiddleware.checkPermissions('View Subscriptions'), membersController.getMember)
-router.patch('/:memberId', authMiddleware.checkPermissions('Update Subscription'), membersController.updateMember)
+router.patch('/:memberId', authMiddleware.checkPermissions('Update Subscriptions'), membersController.updateMember)
 router.post('/', authMiddleware.checkPermissions('Create Subscriptions'), membersController.addMember)
-router.delete('/', authMiddleware.checkPermissions('Delete Subscription'), membersController.deleteMember)
+router.delete('/', authMiddleware.checkPermissions('Delete Subscriptions'), membersController.deleteMember)
 
 module.exports = router

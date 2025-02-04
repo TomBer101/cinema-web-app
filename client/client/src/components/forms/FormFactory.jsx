@@ -22,7 +22,7 @@ const FormFactory = ({type, props}) => {
     }
 
     return (
-        <Card raised={true} sx={{ p: '1rem 2rem', width: '25%'   }}>
+        <Card raised={true} sx={{ p: '1rem 2rem', width: '55%'   }}>
             {formComponent}
         </Card>
     )

@@ -34,7 +34,8 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '1vh'
+            gap: '1vh',
+            width: '100%'
         }}>
             <Typography fontSize='1.5rem' fontWeight='500' variant='h3'>{name}</Typography>
             <Typography variant='body1'>{`Email: ${email}`}</Typography>
