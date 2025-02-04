@@ -48,7 +48,7 @@ const updatePermissions = (userId, updatedPermissions) => {
 
         const index = permissions.findIndex(p => p.userId === userId)
         if (index !== -1 ) {
-            permissions[index] = {userId, ...updatedPermissions}
+            permissions[index] = {userId, permissions: updatedPermissions}
             JFile.writeFileSync(file, {permissions})
             return true
         }

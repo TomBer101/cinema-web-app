@@ -57,13 +57,7 @@ const UserForm = (props) => {
 
     const {data: updateRes, mutate: editUserMutation, isSuccess} = useEditUser()
 
-    // const editUserMutation = useMutation({
-    //     mutationFn: (data) => {
-    //         return updateUser(props.id, data)
-    //     }
-    // })
     
-
 
     useEffect(() => {
         console.table(props)
