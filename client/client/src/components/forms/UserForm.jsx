@@ -6,6 +6,7 @@ import { FormInputCheckbox } from './forms-components/FormInputCheckbox';
 import { useAddUser, useEditUser } from '../../hooks/useUserMutations';
 import { useMutation, useQueryClient } from 'react-query';
 import { addUser, updateUser } from '../../services/usersService';
+import { useParams } from 'react-router-dom';
 
 const PERMISSIONS_OPTIONS = {
     viewSubscriptions: "View Subscriptions",
@@ -35,6 +36,7 @@ const UserForm = (props) => {
             updateMovies: props.permissions?.includes("Update Movies" )  || false,
         },
     })
+    const {type} = useParams()
     const queryClient = useQueryClient()
 
     const [errorMessage, setErrorMessage] = useState(null)
@@ -138,7 +140,7 @@ const UserForm = (props) => {
             <FormInputCheckbox control={control} label={'Delete Subscription'} name={'deleteSubscriptions'} />
             <FormInputCheckbox control={control} label={'Update Subscription'} name={'updateSubscriptions'} />
 
-            <button type='submit'>Submit</button>
+            <button type='submit'>{props.id? 'Update' : 'Add'}</button>
         </form>
     );
 };

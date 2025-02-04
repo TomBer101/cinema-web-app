@@ -1,4 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
+
+import { showModal } from '../redux/actions/modalActions';
 
 export function useGenericMutation(mutationFn, queryKey) {
     const queryClient = useQueryClient();
@@ -12,6 +15,7 @@ export function useGenericMutation(mutationFn, queryKey) {
 
 export function useUpdateMutation(mutationFn, queryKey) {
     const queryClient = useQueryClient();
+    const dispatch = useDispatch()
 
     return useMutation(mutationFn, {
         onMutate: async (updatedItem) => {
@@ -19,9 +23,9 @@ export function useUpdateMutation(mutationFn, queryKey) {
             const prevData = queryClient.getQueryData(queryKey, {exact: false})
 
             const updatedPages = prevData?.pages.map ( page => {
-                const itemIndex = page.data.findIndex(item => item.id === updatedItem.id)
+                const itemIndex = page.data?.findIndex(item => item.id === updatedItem.id)
                 if (itemIndex !== -1) {
-                    return [...page.data.slice(0, itemIndex), ...page.data.slice(itemIndex + 1)]
+                    return [...page.data?.slice(0, itemIndex), ...page.data?.slice(itemIndex + 1)]
                 }
 
                 return page
@@ -37,9 +41,12 @@ export function useUpdateMutation(mutationFn, queryKey) {
         onError: (err, newData, context) => {
             console.error(`Error edit mutating ${queryKey}: `, err)
             queryClient.setQueryData(queryKey, context.prevData)
+            dispatch(showModal({title: 'Error', message:'Failed to update item'}))
         },
 
-        // onSuccess: data => { console.log(data)}
+        onSuccess: data => { 
+            dispatch(showModal({title: 'Success', message: 'Update successful!'}))
+        }
     })
 }
 
