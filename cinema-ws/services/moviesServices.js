@@ -100,10 +100,19 @@ const addMovie = async (movieInfo) => {
 const updateMovie = async (movieId, newData) => {
     try {
         const res = await dataUtils.patchData('movies', movieId, newData)
+        const movieIndex = movieCache.findIndex(movie => movie.id === movieId)
+
+        if (newData.premiered) {
+            newData.premiered = newData.premiered
+        }
+        if (movieIndex !== -1) {
+            movieCache[movieIndex] = { ...movieCache[movieIndex], ...newData }
+        }
+
         return res
     } catch (err) {
         console.error(`Error updating movie: `, err);
-        throw new AppError('Internal server error', 500)
+        throw new AppError.AppError('Internal server error', 500)
     }
 
 }

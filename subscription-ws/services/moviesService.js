@@ -158,9 +158,10 @@ const updateMovie = async (movieId, updatedData) => {
         }
 
         exsitedMovie.geners = updatedData.genres || exsitedMovie.geners 
-        exsitedMovie.premiered = updatedData.premiered || exsitedMovie.premiered 
         exsitedMovie.image = updatedData.image || exsitedMovie.image 
         exsitedMovie.name = updatedData.name || exsitedMovie.name 
+
+        exsitedMovie.premiered = updatedData.premiered || exsitedMovie.premiered
 
         const updatedMovie = await exsitedMovie.save()
         // const updatedMovie = await Movie.updateOne({_id: movieId}, updatedData)

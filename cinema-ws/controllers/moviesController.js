@@ -30,8 +30,9 @@ const updateMovie = async (req, res) => {
     const {movieId} = req.params
 
     try {
-        const {data} = req.body
-        const result = await moviesService.updateMovie(movieId, data);
+        const updatedInfo = req.body
+        const {movieId} = req.params
+        const result = await moviesService.updateMovie(movieId, updatedInfo);
         
         if (result.status === 200) {
             res.status(200).json({message: `Movie ${movieId} was updated`,

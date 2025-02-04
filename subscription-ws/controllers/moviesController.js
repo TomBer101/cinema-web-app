@@ -41,7 +41,7 @@ const addMovie = async (req, res) => {
 }
 
 const updateMovie = async (req, res) => {
-    const {movieId} = req.query 
+    const {movieId} = req.params 
 
     try {
         const data = req.body

@@ -1,3 +1,4 @@
+import { convertToDate } from '../utils/convertors';
 import { deleteData, fetchData, patchData, postData } from '../utils/dataUtils'
 import { formatDate } from '../utils/formatting'
 
@@ -72,6 +73,10 @@ export const addMovie = async (newMovie) => {
 }
 
 export const updateMovie = async (movieId, updatedInfo) => {
+    if (updatedInfo.premiered) {
+        updatedInfo.premiered = convertToDate(updatedInfo.premiered)
+    }
+    
     try {
         const {data: res} = await patchData(`/movies/${movieId}`, updatedInfo)
         return res
