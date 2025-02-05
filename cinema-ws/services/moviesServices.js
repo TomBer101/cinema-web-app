@@ -31,7 +31,7 @@ const getAllMovies = async (pageNumber, feilds, name) => {
                 return movieName.includes(formatedName)
             })
 
-            return movies
+            return {data: movies}
         } else {
             if (requestedIndex >= movieCache.length) {
                 const requestedPage = Math.floor(requestedIndex / MOVIES_PER_FETCH) + 1

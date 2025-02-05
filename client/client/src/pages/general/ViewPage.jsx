@@ -12,6 +12,7 @@ import SearchBar from '../../components/common/SearchBar';
 const MAX_ENTITIES_PER_PAGE  = 10
 import { fetchSubscriptions } from '../../services/subscriptionsService';
 import { getMember } from '../../services/membersService';
+import TiltCard from '../../components/animated/TiltCard';
 
 const ViewPage = () => {
     const {type} = useParams()
@@ -23,7 +24,7 @@ const ViewPage = () => {
     const itemId = location.state?.id
 
 
-    const fetchDataByType = async ({pageParam = 1}) => {
+    const fetchDataByType = async ({pageParam = 1}, searchTerm) => {
         switch (type) {
             case 'movies': 
                 const res = await fetchMovies(pageParam , searchTerm)
@@ -52,12 +53,19 @@ const ViewPage = () => {
         return queryClient.getQueryData(key);
     };
 
+    const handleSearchQuery = (term) => {
+        setSearchTerm(term)
+        if (term === '') {
+            setTimeout(() => setSearchTerm(''), 500)
+        }
+    }
+
     const {data, error, status, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, page} = useInfiniteQuery({
         queryKey: ['fetchData', type],
         queryFn: fetchDataByType,
-        initialPageParam: 1,
+        //initialData: {pageParams: [1], pages: [] },
         getNextPageParam: (lastPage, pages) => {
-            const nextPage = lastPage.hasMore? pages.length + 1 : undefined;
+            const nextPage = lastPage?.hasMore? pages.length + 1 : undefined;
             return nextPage
         },
         enabled: !itemId && !searchTerm ,
@@ -77,10 +85,16 @@ const ViewPage = () => {
     )
 
     const {data: searchResult, refetch: searchMovie} = useQuery({
-        queryKey: ['search', type],
-        queryFn: p => fetchDataByType(),
+        queryKey: ['search', type, searchTerm],
+        queryFn: () => fetchDataByType({ pageParam: 1 }, searchTerm),
         enabled: !!searchTerm
     });
+
+    useEffect(() => {
+        if (searchResult) {
+            console.log('Search result: ', searchResult)
+        }
+    }, [searchResult])
 
     useEffect(() => {
         if (inView && hasNextPage) {
@@ -89,34 +103,36 @@ const ViewPage = () => {
         }
     }, [inView, hasNextPage, fetchNextPage]);
 
-    const handleSearch = async (searchTerm) => {
-        if (type !== 'movies') return;
+    // const handleSearch = async (searchTerm) => {
+    //     if (type !== 'movies') return;
 
-        if (searchTerm === '' || searchTerm === undefined) {
-            queryClient.setQueryData(['search', type], () => []); 
-            return;
-        }
+    //     if (searchTerm === '' || searchTerm === undefined) {
+    //         queryClient.setQueryData(['search', type], () => []); 
+    //         return;
+    //     }
 
-        const cachedMovies = queryClient.getQueryData(['fetchData', type], {exact: false});
-        const allMovies = cachedMovies.pages.reduce((acc, page) => { return acc.concat(page.data); }, []);
-        const foundMovie = allMovies.filter((movie) => movie.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    //     const cachedMovies = queryClient.getQueryData(['fetchData', type], {exact: false});
+    //     const allMovies = cachedMovies.pages.reduce((acc, page) => { return acc.concat(page.data); }, []);
+    //     const foundMovie = allMovies.filter((movie) => movie.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-        if (foundMovie && foundMovie.length !== 0) {
-            console.log('Movie found in cached data:', foundMovie);
-            queryClient.setQueryData(['search', type], ()=> foundMovie)
-            return
-        }
+    //     if (foundMovie && foundMovie.length !== 0) {
+    //         console.log('Movie found in cached data:', foundMovie);
+    //         queryClient.setQueryData(['search', type], ()=> foundMovie)
+    //         return
+    //     }
 
-        // Fetch the movie if not found
-        const result = await searchMovie(searchTerm);
-        console.log('Movie fetched from server:', result);
+    //     // Fetch the movie if not found
+    //     const result = await searchMovie(searchTerm);
+    //     console.log('Movie fetched from server:', result);
 
-        // Add the result to the cached data
-        queryClient.setQueryData(['fetchData', 'movies'], (oldData) => [
-            ...(oldData || []),
-            result,
-        ]);
-    }
+    //     // Add the result to the cached data
+    //     // queryClient.setQueryData(['fetchData', 'movies'], (oldData) => [
+    //     //     ...(oldData.pages || []),
+    //     //     result,
+    //     // ]);
+    // }
+
+
 
     const items = useMemo(() => {
         if (itemId) {
@@ -134,11 +150,11 @@ const ViewPage = () => {
     return (
         <div style={{padding: '0 3rem', position: 'relative'}}>
             <Typography variant='h3'>{`All ${type}`}</Typography>
-            <SearchBar onClick={handleSearch}/>
+            <SearchBar onClick={handleSearchQuery}/>
             <Box sx={{display: !searchResult? 'none' : 'block'}}>
                 <List sx={{width: '55%'}}>
                 {
-                    searchResult?.map((item, index) => {
+                    searchResult?.data.map((item, index) => {
                         return (
                             <ListItem key={index}>
                                 <ItemFactory type={type} props={item} />
