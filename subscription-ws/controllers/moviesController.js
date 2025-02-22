@@ -36,7 +36,7 @@ const addMovie = async (req, res) => {
         res.status(200).json({newMovie})
     } catch (err) {
         console.error('Error in subscription server - add movies: ', err);
-        res.status(err.status).json({message: err.message})
+        res.status(err.statusCode).json({message: err.message, status: err.statusCode})
     }
 }
 

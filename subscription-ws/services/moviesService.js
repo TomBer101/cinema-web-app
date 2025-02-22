@@ -157,7 +157,11 @@ const updateMovie = async (movieId, updatedData) => {
             throw new AppError(`Movie ${movieId} was not found.`)
         }
 
-        exsitedMovie.geners = updatedData.genres || exsitedMovie.geners 
+        if (Array.isArray(updatedData.genres)) {
+            exsitedMovie.genres = updatedData.genres;
+            exsitedMovie.markModified('genres');
+        }
+        
         exsitedMovie.image = updatedData.image || exsitedMovie.image 
         exsitedMovie.name = updatedData.name || exsitedMovie.name 
 

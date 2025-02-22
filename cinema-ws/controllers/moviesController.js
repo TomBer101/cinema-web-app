@@ -22,7 +22,7 @@ const addMovie = async (req, res) => {
         res.status(result.status).json(result.data)
     } catch (err) {
         console.error('Error adding movie: ', err);
-        res.status(err.status).json({message: res.message})        
+        res.status(err.status).json({message: err.message})        
     }
 }
 
