@@ -30,26 +30,29 @@ const MovieForm = (props) => {
         mutationFn: (data) => {
             return addMovie(data)
         }, 
-        onSuccess: (newMovie) => {
-            dispatch(showModal({title: 'Success', message: 'Added successful!'}))
-            queryClient.setQueriesData(
-                { queryKey: ['fetchData', 'movies'], exact: false },
-                (oldData) => {
-                    if (!oldData || !oldData.pages || oldData.pages.length === 0) {
-                        // Initialize with the new user in the first page
-                        return { ...oldData, pages: [{data: newMovie.data.newMoviw, hasMore: true}] };
-                    }
+        // onSuccess: (newMovie) => {
+        //     dispatch(showModal({title: 'Success', message: 'Added successful!'}))
+        //     queryClient.setQueriesData(
+        //         { queryKey: ['fetchData', 'movies'], exact: false },
+        //         (oldData) => {
+        //             if (!oldData || !oldData.pages || oldData.pages.length === 0) {
+        //                 // Initialize with the new user in the first page
+        //                 return { ...oldData, pages: [{data: newMovie.data.newMoviw, hasMore: true}] };
+        //             }
 
-                    const updatedFirstPage = [newMovie.data.newMoviw, ...oldData.pages[0].data];
-                    const {data: firstPageData, hasMore} = oldData.pages[0]
-                    return { ...oldData, pages: [{data: updatedFirstPage, hasMore: hasMore}, ...oldData.pages.slice(0, 1)] };
+        //             const updatedFirstPage = [newMovie.data.newMoviw, ...oldData.pages[0].data];
+        //             const {data: firstPageData, hasMore} = oldData.pages[0]
+        //             return { ...oldData, pages: [{data: updatedFirstPage, hasMore: hasMore}, ...oldData.pages.slice(0, 1)] };
     
-                }
-            );
-        },
+        //         }
+        //     );
+        // },
         onError: (error) => {
             dispatch(showModal({title: 'Error', message:`Failed to add item:: ${error.response.data.message}` }))
 
+        }, 
+        onSuccess: data => {
+            dispatch(showModal({title: 'Success', message: 'Added successful!'}))
         }
 
     })

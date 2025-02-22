@@ -149,7 +149,7 @@ const ViewPage = () => {
 
     return (
         <div style={{padding: '0 3rem', position: 'relative'}}>
-            <Typography variant='h3'>{`All ${type}`}</Typography>
+            <Typography variant='h3' fontSize={'2rem'} fontWeight={500}>{`All ${type}`}</Typography>
             <SearchBar onClick={handleSearchQuery}/>
             <Box sx={{display: !searchResult? 'none' : 'block'}}>
                 <List sx={{width: '55%'}}>

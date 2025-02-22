@@ -89,7 +89,7 @@ const getMoviesFeilds = async (feilds) => {
 const addMovie = async (movieInfo) => {
     try {
         const res = await dataUtils.postData('movies', movieInfo)
-        movieCache.push(movieInfo)
+        movieCache.push({...res.data.newMovie, id: res.data.newMovie._id})
         return res
     } catch (err) {
         console.error('Error post movie: ', err);
