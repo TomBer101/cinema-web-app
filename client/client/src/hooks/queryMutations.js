@@ -52,41 +52,41 @@ export function useUpdateMutation(mutationFn, queryKey) {
 
 export function useGenericDelete(mutationFn, queryKey) {
     const queryClient = useQueryClient();
+    const dispatch = useDispatch()
 
     return useMutation(mutationFn, {
-        onMutate: async (id) => {
-            await queryClient.cancelQueries(queryKey, {exact: false});
+        onMutate: async ({id, queryKey}) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({queryKey, exact: false});
+            const previousData = queryClient.getQueryData(queryKey, {exact: false});
 
-            const previousData = queryClient?.getQueryData(queryKey, {exact: false});
-            
-            const updatedPages = previousData.pages.map(page => {
-                const itemIndex = page.data.findIndex(item => item.id === id)
-
-                if (itemIndex !== -1) {
-                    page.data =  [...page.data.slice(0, itemIndex), ...page.data.slice(itemIndex + 1)]
-                }
-
-                return page
+            // Update the cache immediately
+            queryClient.setQueryData(queryKey, (oldData) => {
+                if (!oldData || !oldData.pages) return oldData;
+                
+                return {
+                    ...oldData,
+                    pages: oldData.pages.map(page => ({
+                        ...page,
+                        data: page.data.filter(item => item.id !== id)
+                    }))
+                };
             });
 
-
-
-            queryClient.setQueryData(queryKey, {
-                ...previousData,
-                pages: updatedPages,
-            });
-
-            // Return the previous data for rollback
             return { previousData };
-
         },
-        onError: (err, id, context) => {
-            console.error(`Error delete mutating ${queryKey}: `, err)
+        onError: (err, variables, context) => {
+            // Revert on error
             queryClient.setQueryData(queryKey, context.previousData);
+            dispatch(showModal({title: 'Error', message:'Failed to delete item'}))
         },
         onSettled: () => {
-            queryClient.invalidateQueries(queryKey);
+            // Always refetch after error or success
+            queryClient.invalidateQueries(queryKey, { exact: false });
         },
+        onSuccess: () => {
+            dispatch(showModal({title: 'Success', message: 'Item deleted successfully!'}))
+        }
     });
 }
 

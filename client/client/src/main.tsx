@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { QueryClientProvider } from 'react-query'
-
+import { Provider } from 'react-redux'
 import { AuthProvider } from './contetxt/AuthContext.jsx'
 import { LoginPage, RegisterPage } from './pages/index.js'
 
@@ -13,8 +13,9 @@ import ViewPage from './pages/general/ViewPage.jsx'
 import AddPage from './pages/general/AddPage.jsx'
 import EditPage from './pages/general/EditPage.jsx'
 import ErrorPage from './pages/ErrorPage.jsx'
-
+import store from './redux/store.js'
 import queryClient from './configs/reactQuery.js'
+import PopUp from './components/common/PopUp.jsx'
 
 
 
@@ -74,9 +75,12 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
 
   <QueryClientProvider client={queryClient}>
-    <AuthProvider >
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider >
+        <RouterProvider router={router} />
+        <PopUp />
+      </AuthProvider>
+    </Provider>
   </QueryClientProvider>
 
 

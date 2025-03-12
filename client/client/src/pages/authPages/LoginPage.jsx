@@ -12,20 +12,22 @@ import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 
 import { useAuth } from '../../contetxt/AuthContext'
 import styles from '../../styles/form.module.css'
+import { useDispatch } from 'react-redux';
+import { showModal } from '../../redux/actions/modalActions';
 
 const LoginPage = () => {
     const navigate = useNavigate()
     const { error, loading, onLogin, currentUser } = useAuth()
     const { register, handleSubmit, formState: { errors } } = useForm()
-
+    const dispatch = useDispatch()
     const [errorMessage, setErrorMessage] = useState(null)
-    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const onSubmit = async (data) => {
         try {
             const res = await onLogin(data.username, data.password)
             if (!res) {
-                setIsModalOpen(true)
+                // setIsModalOpen(true)
+                dispatch(showModal({title: "Error Login", message: "Invalid username or password"}))
             }
 
             if (res) {
@@ -37,9 +39,7 @@ const LoginPage = () => {
         }
     }
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
+
 
 
     return (
@@ -102,34 +102,7 @@ const LoginPage = () => {
                 
                     </div>
                     </Box>
-                <Modal
-                    open={isModalOpen}
-                    onClose={handleCloseModal}
-                >
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            p: 4,
-                            borderRadius: 2,
-                            width: '300px',
-                        }}
-                    >
-                        <Typography id="error-modal-title" variant="h6" component="h2">
-                            Login Error
-                        </Typography>
-                        <Typography id="error-modal-description" sx={{ mt: 2 }}>
-                            {error} {/* Display error from useAuth */}
-                        </Typography>
-                        <Button onClick={handleCloseModal} sx={{ mt: 3 }} variant="contained">
-                            Close
-                        </Button>
-                    </Box>
-                </Modal>
+                
             </Box>
         </div>
     );

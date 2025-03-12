@@ -118,7 +118,7 @@ const getAllMovies = async (page, limit, name) => { // TODO: add watchers data
     }
 }
 
-const addMovie = async ({name, genres, imageUrl, premired}) => {
+const addMovie = async ({name, genres, imageUrl, premiered}) => {
     try {
         const exsitedMovie = await Movie.findOne({name})
 
@@ -130,7 +130,7 @@ const addMovie = async ({name, genres, imageUrl, premired}) => {
             name,
             geners: genres,
             image: imageUrl,
-            premiered: premired
+            premiered: premiered
         })
 
         await newMovie.save()

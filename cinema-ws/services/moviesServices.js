@@ -144,6 +144,18 @@ const getMovieById = async (movieId) => {
 
 }
 
+const removeWatcher =  (memberId, movies) => {
+
+        for (const movie of movies) {
+            const movieIndex = movieCache.findIndex(m => m.id === movie.id)
+            if (movieIndex !== -1) {
+                movieCache[movieIndex].members = movieCache[movieIndex].members.filter(member => member.id !== memberId)
+            }
+        }
+
+}
+
+
 const invalidateCache = (subscription) => {
     for (let i = 0; i < movieCache.length; i++) {
         if (movieCache[i].id === subscription.movieId) {
@@ -159,5 +171,6 @@ module.exports = {
     updateMovie,
     deleteMovie,
     getMovieById,
-    invalidateCache
+    invalidateCache,
+    removeWatcher
 }

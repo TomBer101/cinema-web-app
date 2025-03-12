@@ -14,7 +14,7 @@ const MovieItem = ({id, name, genres, image, premiered, members}) => {
 
     const handleDelete = (e) => {
         e.preventDefault()
-        deleteMovie(id)
+        deleteMovie({id, queryKey: ['fetchData', 'movies']})
     };
 
     const handleEditOnClick = () => {

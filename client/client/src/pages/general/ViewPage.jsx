@@ -24,6 +24,7 @@ const ViewPage = () => {
     const itemId = location.state?.id
 
 
+
     const fetchDataByType = async ({pageParam = 1}, searchTerm) => {
         switch (type) {
             case 'movies': 
@@ -71,13 +72,18 @@ const ViewPage = () => {
         enabled: !itemId && !searchTerm ,
     })
 
+    useEffect(() => {
+        console.log("Data has changed");
+        
+    }, [data, data?.pages])
+
     const {data: specificItem, isLoading: isLoadingItem} = useQuery(
         ['fetchById', type, itemId],
         () => fetchById(itemId),
         {
             enabled: !!itemId && !queryClient
             .getQueryData(['fetchData', type])
-            ?.pages.flatMap((page) => page)
+            ?.pages?.flatMap((page) => page)
             .find((item) => item.id === itemId),
             cacheTime: 0,
             staleTime: 0
@@ -141,7 +147,7 @@ const ViewPage = () => {
 
         const res = data?.pages.flatMap(page => page.data) || []
         return res
-    }, [data, specificItem, itemId])
+    }, [data, specificItem, itemId, data?.length])
    
 
     if (isLoading) return <p>Loading...</p>

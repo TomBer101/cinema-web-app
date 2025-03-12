@@ -25,7 +25,10 @@ const AddMovieForm = ({memberId, movies}) => {
         },
     })
 
-    const addSubscriptionMutation = useMutation( addSubscription, {
+    const addSubscriptionMutation = useMutation( 
+        (data) => {
+            return addSubscription(data)
+        }, {
         onMutate: async (newSubscription) => {
             await queryClient.cancelQueries({queryKey: ['fetchData', 'subscriptions'], exact: false})
 
@@ -68,11 +71,12 @@ const AddMovieForm = ({memberId, movies}) => {
     )
 
     const onSubmitHandler = (data) => {
+        console.log('Form data:', data);
         const reqBody = {
             memberId,
             subscription: data
         }
-
+        console.log('Request body:', reqBody);
         addSubscriptionMutation.mutate(reqBody)
     }
 

@@ -1,13 +1,24 @@
 import queryClient from "../configs/reactQuery"
 import { deleteData, fetchData, patchData, postData } from "../utils/dataUtils"
 
-export const  addMember = async (newMember) => {
-    const response = await postData('/members', newMember)
-    return response
+export const addMember = async (newMember) => {
+    try {
+        const response = await postData('/members', newMember)
+        return response
+    } catch (err) {
+        console.error('Error adding member:', err);
+        const errorMessage = err.response?.data?.message || err.message || 'An error occurred while adding member';
+        throw errorMessage
+    }
 }
 
 export const deleteMember = async (memberId) => {
-    const response = await deleteData('/members', {params: {memberId}})
+    try {
+        const response = await deleteData('/members', {params: {memberId}})
+        return response
+    } catch (err) {
+        throw err
+    }
 }
 
 export const editMember = async (memberId, updatedMember) => {
@@ -21,11 +32,13 @@ export const editMember = async (memberId, updatedMember) => {
 
 export const getMember = async (memberId) => {
     try {
-        const cachedData = queryClient.getQueriesData(['fetchedData', 'subscriptions'],{ exact: false})
+        const cachedData = queryClient.getQueriesData(['fetchData', 'subscriptions'],{ exact: false})
 
         let member = null;
 
-        for (const page in cachedData) {
+        const pages = cachedData[1]?.pages
+
+        for (const page in pages) {
             member = page.find(member => member.id === memberId)
             if (member) return member
         }

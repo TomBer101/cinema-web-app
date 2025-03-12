@@ -1,5 +1,6 @@
 const dataUtils = require('../utils/wsUtils')
 const {AppError} = require('../classes/appErrors')
+const moviesService = require('./moviesServices')
 
 
 const MOVIES_PER_PAGE = 50;
@@ -50,6 +51,13 @@ const addMember = async (memberInfo) => {
 
     try {
         const res = await dataUtils.postData('members', memberInfo)
+
+        membersCache.push({
+            ...memberInfo,
+            movies: [],
+            id: res.data.newMember._id
+        })
+        
         return res
     } catch (err) {
         console.error('Error post member: ', err);
@@ -74,7 +82,12 @@ const updateMember = async (memberId, newData) => {
 }
 
 const deleteMember = async (memberId) => {
+    const member = membersCache.find(member => member.id === memberId)
     membersCache = membersCache.filter(member => member.id !== memberId)
+
+    if (member) {
+        moviesService.removeWatcher(memberId, member.movies)
+    }
 
     try {
         const res = await dataUtils.deleteData('members', memberId)

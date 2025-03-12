@@ -84,12 +84,38 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('cinema-ws-user')
     }
 
+    const register = async (userName, password) => {
+        //const {username, password} = data
+
+        try {
+            setLoading(true)
+            const registerResult = await registerUser(userName, password)
+            registerResult.data.permissions = registerResult.data.permissions.map(per => per.toLowerCase())
+
+            if (registerResult.success) {
+                setCurrentUser(registerResult.data)
+                return true
+            } else {
+                setError(registerResult.message)
+                return false
+            }
+        } catch(err) {
+            console.error('Register failed: ', err);
+            setError('Register Failed!')
+            
+        } finally {
+            setLoading(false);
+        }
+
+    }
+
     const value = useMemo( () => ({
         currentUser, 
         error, 
         loading, 
         onLogin : login, 
         onLogOut : logout,
+        onRegister: register
     }), [currentUser]);
 
     return (

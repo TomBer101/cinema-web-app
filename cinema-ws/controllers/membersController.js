@@ -28,7 +28,7 @@ const addMember = async (req, res) => {
     try {
         const result = await membersService.addMember(req.body)
 
-        res.status(result.status).json(result.data)
+        res.status(result.status).json({...result.data.newMember, movies: []})
     } catch (err) {
         console.error('Error adding member: ', err);
 
@@ -71,7 +71,7 @@ const deleteMember = async (req, res) => {
             res.status(200).json({message: `Member ${memberId} was deleted`})
         }
     } catch (err) {
-        res.status(err.status).json({message: err.message})
+        res.status(err.status || err.statusCode).json({message: err.message})
     }
 }
 

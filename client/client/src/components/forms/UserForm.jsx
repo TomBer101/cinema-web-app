@@ -7,17 +7,10 @@ import { useAddUser, useEditUser } from '../../hooks/useUserMutations';
 import { useMutation, useQueryClient } from 'react-query';
 import { addUser, updateUser } from '../../services/usersService';
 import { useParams } from 'react-router-dom';
-
-const PERMISSIONS_OPTIONS = {
-    viewSubscriptions: "View Subscriptions",
-    createSubscriptions: "Create Subscriptions",
-    deleteSubscriptions: "Delete Subscriptions",
-    updateSubscriptions: "Update Subscriptions",
-    viewMovies: "View Movies",
-    createMovies: "Create Movies",
-    deleteMovies: "Delete Movies",
-    updateMovies: "Update Movies" 
-}
+import { transformUserData } from '../../utils/formatting';
+import {PERMISSIONS_OPTIONS} from '../../utils/constants'
+import { useDispatch } from 'react-redux';
+import { showModal } from '../../redux/actions/modalActions';
 
 const UserForm = (props) => {
     const { setValue, control, handleSubmit, watch, reset, formState: {errors}, getValues} = useForm({
@@ -38,7 +31,7 @@ const UserForm = (props) => {
     })
     const {type} = useParams()
     const queryClient = useQueryClient()
-
+    const dispatch = useDispatch()
     const [errorMessage, setErrorMessage] = useState(null)
     
     const addUserMutation = useMutation({
@@ -46,6 +39,7 @@ const UserForm = (props) => {
             return addUser(data)
         },
         onSuccess: (newUser) => {
+            reset()
             queryClient.setQueriesData(
                 { queryKey: ['fetchData', 'users'], exact: false },
                 (oldData) => {
@@ -54,16 +48,12 @@ const UserForm = (props) => {
                     return [newUser, ...oldData]
                 }
             );
+
+            dispatch(showModal({titlr: 'Success', message: 'User created successfully'}))
         },
     })
 
     const {data: updateRes, mutate: editUserMutation, isSuccess} = useEditUser()
-
-    
-
-    useEffect(() => {
-        console.table(props)
-    }, [props])
 
     const subscriptionsWatcher = watch(["createSubscriptions", "updateSubscriptions", "deleteSubscriptions"])
     const moviesWatcher = watch(["createMovies", "deleteMovies", "updateMovies"])
@@ -86,37 +76,17 @@ const UserForm = (props) => {
         
     }, [subscriptionsWatcher, setValue])
 
-    const transformUserData = (formData) => {
-        const userData = {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          userName: formData.userName,
-          sessionTimeout: formData.sessionTimeout,   
-      
-        };
-      
-        const userPermissions = Object.keys(formData)
-          .filter(key => key !== 'firstName' && key !== 'lastName' && key !== 'userName' && key !== 'sessionTimeout')
-          .filter(key => formData[key]) // Filter out unchecked permissions
-          .map(key => PERMISSIONS_OPTIONS[key]);
-      
-        return { userData, userPermissions, id: props.id };
-    }
+
 
     const onSubmitHandler = (data) => {
         console.log('Form Submitted: ', data);
-        const formattedData = transformUserData(data)
+        const formattedData = transformUserData(data, props.id)
 
         if (props.id) {
             editUserMutation(formattedData)
-            if (isSuccess) {
-                console.log(updateRes)
-            }
-            
         } else {
             addUserMutation.mutate(formattedData)
         }
-        
     }
 
 
@@ -140,7 +110,7 @@ const UserForm = (props) => {
             <FormInputCheckbox control={control} label={'Delete Subscription'} name={'deleteSubscriptions'} />
             <FormInputCheckbox control={control} label={'Update Subscription'} name={'updateSubscriptions'} />
 
-            <button type='submit'>{props.id? 'Update' : 'Add'}</button>
+            <Button color='success' variant='contained' type='submit'>{props.id? 'Update' : 'Add'}</Button>
         </form>
     );
 };

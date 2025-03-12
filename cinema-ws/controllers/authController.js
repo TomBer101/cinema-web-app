@@ -22,9 +22,9 @@ const signUp = async (req, res) => {
         req.session.cookie._expire = new Date(Date.now() + userData.sessionTimeout * 60000); 
 
         res.status(200).send({
-            message: 'Login successful', 
+            message: 'Registered successful', 
             userName: `${userData.firstName} ${userData.lastName}`,
-            permissions: userPermissions
+            permissions: userPermissions,
         });
     
         //sign up

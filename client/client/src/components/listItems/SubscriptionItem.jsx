@@ -8,14 +8,16 @@ import { useDeleteMember } from '../../hooks/useMembersMutations';
 import { useNavigate } from 'react-router-dom';
 import AddMovieForm from '../forms/AddMovieForm';
 import {formatDate} from '../../utils/formatting'
+import { useAuth } from '../../contetxt/AuthContext';
 
 const SubscriptionItem = ({id, name, email, city, movies}) => {
     const {mutate: deleteMember} = useDeleteMember()
+    const {currentUser} = useAuth()
     const navigate = useNavigate()
 
     const handleDelete = (event) => {
         event.preventDefault()
-        deleteMember(id)
+        deleteMember({id, queryKey: ['fetchData', 'subscriptions']})
     }
 
     const handleEditOnClick = () => {
@@ -41,8 +43,8 @@ const SubscriptionItem = ({id, name, email, city, movies}) => {
             <Typography variant='body1'>{`Email: ${email}`}</Typography>
             <Typography variant='body1'>{`City: ${city}`}</Typography>
             <div className="buttons" style={{display: 'flex', justifyContent: 'space-between', margin: '1rem 0'}}>
-                <Button color='error' variant='contained' onClick={(e) => handleDelete(e)}>Delete</Button>
-                <Button variant='contained' onClick={() => handleEditOnClick()}>Edit</Button> 
+                <Button disabled={!currentUser.permissions.includes('delete subscriptions')} color='error' variant='contained' onClick={(e) => handleDelete(e)}>Delete</Button>
+                <Button disabled={!currentUser.permissions.includes('update subscriptions')} variant='contained' onClick={() => handleEditOnClick()}>Edit</Button> 
                 {/* click on edit should navigate to the edit page and passing as state the current page as well */}
             </div>
 

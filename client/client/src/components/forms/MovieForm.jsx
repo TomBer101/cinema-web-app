@@ -8,6 +8,7 @@ import { useEditMovie } from '../../hooks/useMoviesMutations';
 import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { showModal } from '../../redux/actions/modalActions';
+import FormInputDate from './forms-components/FormInputDate';
 
 const MovieForm = (props) => {
     const navigate = useNavigate()
@@ -30,28 +31,14 @@ const MovieForm = (props) => {
         mutationFn: (data) => {
             return addMovie(data)
         }, 
-        // onSuccess: (newMovie) => {
-        //     dispatch(showModal({title: 'Success', message: 'Added successful!'}))
-        //     queryClient.setQueriesData(
-        //         { queryKey: ['fetchData', 'movies'], exact: false },
-        //         (oldData) => {
-        //             if (!oldData || !oldData.pages || oldData.pages.length === 0) {
-        //                 // Initialize with the new user in the first page
-        //                 return { ...oldData, pages: [{data: newMovie.data.newMoviw, hasMore: true}] };
-        //             }
 
-        //             const updatedFirstPage = [newMovie.data.newMoviw, ...oldData.pages[0].data];
-        //             const {data: firstPageData, hasMore} = oldData.pages[0]
-        //             return { ...oldData, pages: [{data: updatedFirstPage, hasMore: hasMore}, ...oldData.pages.slice(0, 1)] };
-    
-        //         }
-        //     );
-        // },
         onError: (error) => {
-            dispatch(showModal({title: 'Error', message:`Failed to add item:: ${error.response.data.message}` }))
+            dispatch(showModal({title: 'Error', message:`Failed to add item: ${error.response.data.message}` }))
 
         }, 
+
         onSuccess: data => {
+            reset()
             dispatch(showModal({title: 'Success', message: 'Added successful!'}))
         }
 
@@ -86,7 +73,7 @@ const MovieForm = (props) => {
                 } }}
             />
             <FormInputText control={control} label={"Image URL"} name={'imageUrl'} />
-            <FormInputText control={control} label={"Premiered"} name={'premiered'} />
+            <FormInputDate control={control} name={'premiered'} />
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <Button color='success' variant='contained' type='submit'>{props.id? 'Update' : 'Add'}</Button>
             <Button color='error' variant='outlined' onClick={() => navigate(-1)}>Cancel</Button>

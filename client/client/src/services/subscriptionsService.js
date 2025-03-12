@@ -15,10 +15,13 @@ export const fetchSubscriptions = async (page) => {
 }
 
 export const addSubscription = async (newSubscription) => {
+    console.log('addSubscription service called with:', newSubscription);
     try {
         const {data: subscription} = await postData(`subscriptions/${newSubscription.memberId}`, newSubscription.subscription)
+        console.log('Subscription response:', subscription);
         return subscription
     } catch (err) {
+        console.log('Error in addSubscription:', err);
         if (err.status === 401) {
             throw new Error('Unauthorized! Please login again.')
         } else {

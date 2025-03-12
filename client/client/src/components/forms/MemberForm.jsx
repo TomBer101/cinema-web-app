@@ -6,11 +6,13 @@ import { useMutation, useQueryClient } from 'react-query';
 import { addMember } from '../../services/membersService';
 import { useForm } from 'react-hook-form';
 import { useEditMember } from '../../hooks/useMembersMutations';
-
-
+import { useDispatch } from 'react-redux';
+import { showModal } from '../../redux/actions/modalActions';
+import { useNavigate } from 'react-router-dom';
 
 const MemberForm = (props) => {
-
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { setValue, control, handleSubmit, watch, reset, formState: {errors}, getValues} = useForm({
             defaultValues: {
                 name: props.name || '',
@@ -28,26 +30,24 @@ const MemberForm = (props) => {
             queryClient.setQueriesData({queryKey: ['fetchData', 'subscriptions'], exact: false}, (oldData) => {
 
                 if (!oldData || !oldData.pages || oldData.pages.length === 0) {
-                    // Initialize with the new user in the first page
                     return { ...oldData, pages: [{data: newUserFromServer.data.newMember, hasMore: true}] };
                 }
     
-                // Add the new user to the beginning of the first page
                 const updatedFirstPage = [newUserFromServer.data.newMember, ...oldData.pages[0].data];
                 const {data: firstPageData, hasMore} = oldData.pages[0]
                 return { ...oldData, pages: [{data: updatedFirstPage, hasMore: hasMore}, ...oldData.pages.slice(0, 1)] };
 
-                // const res = {
-                //     ...oldData,
-                //     pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-                // }
-                // return res;
+         
             });
+            reset()
+            dispatch(showModal({title: "Success", message:"Member was added!"}))
         },
         onError: (error) => {
             console.error(error);
-            
-        }
+            dispatch(showModal({title: "Error", message: error}))
+        },
+        onSettled: () => {queryClient.invalidateQueries({queryKey: ['fetchData', 'movies'], exact: false})}
+        
     })
 
     const {date: updatedRes, mutate: editMemberMutation, isSuccess} = useEditMember()
@@ -73,7 +73,7 @@ const MemberForm = (props) => {
 
             <Box className='buttons' sx={{display: 'flex', justifyContent: 'space-between', mt: 2}}>
                 <Button type='submit'>Add</Button>
-                <Button>Cancel</Button>
+                <Button onClick={() => navigate('/subscriptions', {replace: true})}>Cancel</Button>
             </Box>
         </form>
     );

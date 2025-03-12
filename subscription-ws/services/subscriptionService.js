@@ -34,7 +34,7 @@ const addOrUpdatesubscription = async (memberId, movieId, date) => {
         }
 
         const movie = await Movie.findById(movieId)
-        return {movieId, date, memberId, movieName: movie.name}
+        return {movieId, date, memberId, movieName: movie.name, memberName: member.name}
     } catch (err) {
         console.error("Error adding subscription: ", err);
         throw err

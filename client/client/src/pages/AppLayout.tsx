@@ -1,8 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { NavLink, Outlet, useParams } from 'react-router-dom'
-import store from '../redux/store';
-import { Provider } from 'react-redux';
+
 
 import { useAuth } from '../contetxt/AuthContext';
 import styles from '../styles/navbar.module.css'
@@ -13,7 +12,9 @@ const AppLayout = () => {
     const { type } = useParams()
 
     return (
-        <Provider store={store}>
+        <div>
+
+        
             <div>
                 <Typography
                     sx={{
@@ -98,7 +99,7 @@ const AppLayout = () => {
                                 >{`Add ${type}`}</NavLink>
                                 }
                                 {
-                                    type === 'users' && currentUser.admin &&
+                                    type === 'users' && currentUser?.admin &&
                                     <NavLink className={styles.navLink}
                                     style={({ isActive }) => ({
                                     border: '2px solid #626F47',
@@ -108,7 +109,8 @@ const AppLayout = () => {
                                     })} 
                                     to='add'
                                     end
-                                >{`Add ${type}`}</NavLink>}
+                                    >{`Add ${type}`}</NavLink>
+                                }
                             </Stack>
                         </Stack>
                     }
@@ -117,8 +119,7 @@ const AppLayout = () => {
 
                 <Outlet />
             </div>
-            <PopUp /> 
-        </Provider>
+            </div>
         
     );
 };

@@ -86,12 +86,17 @@ export const updateMovie = async (movieId, updatedInfo) => {
 };
 
 export const deleteMovie = async (movieId) => {
-    const response = await deleteData('/movies', {params: {movieId}})
+    try {
+        const response = await deleteData('/movies', {params: {movieId}})
+        return response
+    } catch (err) {
+        throw err
+    } 
 }
 
 export const getMoviesName = async (page, query) => {
     const {movies} = await fetchData('/movies', page, query)
-    return movies
+    return movies.sort((a, b) => a.name.localeCompare(b.name))
 }
 
 export const getMovieById = async (movieId) => {

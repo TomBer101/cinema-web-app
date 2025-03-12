@@ -9,7 +9,7 @@ const getData = async (route, limit = undefined, page = undefined, projection = 
             params: {
                 limit: limit,
                 page,
-                feilds: projection
+                feilds: projection,
             }
         })
 
@@ -26,7 +26,7 @@ const postData = async (route, data) => {
         return res
     } catch (err) {
         console.error(('Error posting new data: ', err));
-        throw err
+        throw err.response.data
     }
 }
 

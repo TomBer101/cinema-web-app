@@ -9,7 +9,7 @@ const AddPage = () => {
 
     return (
         <div>
-            <Typography variant='h3'>{`Add ${type}`}</Typography>
+            <Typography variant='h3' fontSize={'2rem'} fontWeight={500}>{`Add ${type}`}</Typography>
             <FormFactory type={type}/>
         </div>
     );

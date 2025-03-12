@@ -14,7 +14,7 @@ const EditPage = () => {
 
     return (
         <div>
-            <Typography variant='h3'>{`Edit ${type}: ${location.state.name}`}</Typography>
+            <Typography variant='h3' fontSize={'2rem'} fontWeight={500}>{`Edit ${type}: ${location.state.name}`}</Typography>
             <FormFactory type={type} props={location.state} />
         </div>
     );
