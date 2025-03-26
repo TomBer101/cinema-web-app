@@ -1,6 +1,13 @@
 {
     "permissions": [
         {
+            "userId": "67dd3d0a1bdea669b9cd2a09",
+            "permissions": [
+                "View Movies",
+                "Create Movies"
+            ]
+        },
+        {
             "userId": "67d05bea00841085c7e8b43f",
             "permissions": [
                 "View Subscriptions",
