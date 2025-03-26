@@ -36,16 +36,17 @@ export const getMember = async (memberId) => {
 
         let member = null;
 
-        const pages = cachedData[1]?.pages
+        const pages = cachedData[0][1]?.pages
 
-        for (const page in pages) {
-            member = page.find(member => member.id === memberId)
+        for (const page of pages) {
+
+            member = page.data.find(member => member.id === memberId)
             if (member) return member
         }
 
         if (!member) {
             const response = await fetchData(`/members/${memberId}`)
-            return response.member
+            return response.member.member
         }
     } catch (err) {
         console.error(`Error fetching member ${memberId}: `, err);

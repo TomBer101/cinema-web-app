@@ -73,9 +73,9 @@ export const addMovie = async (newMovie) => {
 }
 
 export const updateMovie = async (movieId, updatedInfo) => {
-    if (updatedInfo.premiered) {
-        updatedInfo.premiered = convertToDate(updatedInfo.premiered)
-    }
+    // if (updatedInfo.premiered) {
+    //     updatedInfo.premiered = convertToDate(updatedInfo.premiered)
+    // }
     
     try {
         const {data: res} = await patchData(`/movies/${movieId}`, updatedInfo)
@@ -96,7 +96,8 @@ export const deleteMovie = async (movieId) => {
 
 export const getMoviesName = async (page, query) => {
     const {movies} = await fetchData('/movies', page, query)
-    return movies.sort((a, b) => a.name.localeCompare(b.name))
+    movies.moviesProjection.sort((a, b) => a.name.localeCompare(b.name))
+    return movies
 }
 
 export const getMovieById = async (movieId) => {
